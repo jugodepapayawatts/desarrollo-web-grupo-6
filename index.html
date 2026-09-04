@@ -1,131 +1,55 @@
 <!DOCTYPE html>
-
 <html>
+    <head>
+        <title>Crear Cuenta</title>
+    </head>
+    <body>
+        <h1>Crear una cuenta</h1>
+        <form>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre"
+            name="nombre">
+            <br><br>
 
-<head>
-    <title>Crear Cuenta</title>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido"
+            name="apellido">
+            <br><br>
 
-    <style>
-        body {
-            background-image: url("logo.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            <label for="correo">Correo electronico:</label>
+            <input type="email" id="correo"
+            name="correo">
+            <br><br>
 
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
+            <label for="usuario">Nombre de usuario:</label>
+            <input type="text" id="usuario"
+            name="usuario">
+            <br><br>
 
-            min-height: 100vh;
-            margin: 0;
-            padding-right: 80px;
-            box-sizing: border-box;
-        }
-        .contenedor {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .bienvenidos {
-            color: white;
-            font-size: 50px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px 6px black;
-        }
-        .recuadro {
-            background-color: rgba(255, 255, 255, 0.92);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-            width: 300px;
-        }
+            <label for="contrasena">Contraseña:</label>
+            <input type="password" id="contrasena"
+            name="contrasena">
+            <br><br>
 
-        h1 {
-            text-align: center;
-            color: #333;
-            font-size: 24px;
-            margin-top: 0;
-        }
+            <label for="fecha">Fecha de nacimiento:</label>
+            <input type="date" id="fecha"
+            name="fecha">
+            <br><br>
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 7px;
-            box-sizing: border-box;
-        }
+            <label for="genero">Genero</label>
+            <select id="genero" name="genero">
+                
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="prefiero no decirlo">prefiero no decirlo</option>
+            </select>
+            <br><br>
 
-        input[type="submit"] {
-            width: 100%;
-            padding: 9px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+            <input type="checkbox" id="terminos" name="terminos">
+            <label for="terminos">Acepto los terminos y condiciones</label>
+            <br><br>
 
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
-
-</head>
-
-<body>
-
-    <div class="contenedor">
-
-        <div class="bienvenidos">
-            BIENVENIDOS!
-        </div>
-
-        <div class="recuadro">
-
-            <h1>Crear una cuenta</h1>
-
-            <form>
-
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre">
-                <br><br>
-
-                <label for="apellido">Apellido:</label>
-                <input type="text" id="apellido" name="apellido">
-                <br><br>
-
-                <label for="correo">Correo electronico:</label>
-                <input type="email" id="correo" name="correo">
-                <br><br>
-
-                <label for="usuario">Nombre de usuario:</label>
-                <input type="text" id="usuario" name="usuario">
-                <br><br>
-
-                <label for="contrasena">Contrasena:</label>
-                <input type="password" id="contrasena" name="contrasena">
-                <br><br>
-
-                <label for="fecha">Fecha de nacimiento:</label>
-                <input type="date" id="fecha" name="fecha">
-                <br><br>
-
-                <label for="genero">Genero:</label>
-                <select id="genero" name="genero">
-                    <option value="masculino">Masculino</option>
-                    <option value="femenino">Femenino</option>
-                    <option value="otro">Otro</option>
-                </select>
-
-                <br><br>
-
-                <input type="checkbox" id="terminos" name="terminos">
-                <label for="terminos">Acepto los terminos y condiciones</label>
-
-                <br><br>
-
-                <input type="submit" value="
+            <input type="submit" value="Crear cuenta">
+        </form>
+    </body>
+</html>
