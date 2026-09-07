@@ -1,1 +1,19 @@
+body{
+  padding: 25px;
+}
+.boton_juego{
+  padding: 25px;
+  border-radius: 25px;
+}
+.boton_juego img{
+  background-image: url(https://preview.redd.it/angry-birds-dice-v0-ad3pw80to09f1.jpeg?auto=webp&s=f65d89d38a3d08dc05d48cad3da588701d51258b);
+  width:100px;
+  height:100px;
+}
+.juegos{
+  display:grid;
+  grid-template-columns: 1fr 1fr ;
+  gap:200px;
+}
+
 
