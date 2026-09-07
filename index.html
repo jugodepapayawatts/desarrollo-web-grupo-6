@@ -1,55 +1,120 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Crear Cuenta</title>
-    </head>
-    <body>
-        <h1>Crear una cuenta</h1>
-        <form>
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre"
-            name="nombre">
-            <br><br>
+  <head>
+    <title> casino nova </title>
+    <link rel="stylesheet" href="styles.css" />
 
-            <label for="apellido">Apellido:</label>
-            <input type="text" id="apellido"
-            name="apellido">
-            <br><br>
+    <style>
+      body {
+        background-color: #160b2e;
+        color: white;
+      }
 
-            <label for="correo">Correo electronico:</label>
-            <input type="email" id="correo"
-            name="correo">
-            <br><br>
+      form label {
+        background-color: white;
+        color: black;
+        padding: 3px;
+        border: 1px solid black;
+        display: inline-block;
+      }
 
-            <label for="usuario">Nombre de usuario:</label>
-            <input type="text" id="usuario"
-            name="usuario">
-            <br><br>
+      body > h1:not(.title) {
+        background-color: #d4af37;
+        color: black;
+        padding: 5px;
+        border: 1px solid black;
+        display: inline-block;
+      }
 
-            <label for="contrasena">Contraseña:</label>
-            <input type="password" id="contrasena"
-            name="contrasena">
-            <br><br>
+      .title {
+        color: #d4af37;
+      }
+    </style>
 
-            <label for="fecha">Fecha de nacimiento:</label>
-            <input type="date" id="fecha"
-            name="fecha">
-            <br><br>
+  </head>
 
-            <label for="genero">Genero</label>
-            <select id="genero" name="genero">
-                
-                <option value="masculino">Masculino</option>
-                <option value="femenino">Femenino</option>
-                <option value="prefiero no decirlo">prefiero no decirlo</option>
-            </select>
-            <br><br>
+  <body>
+      <h1 class="title"> CASINO NOVA </h1>
 
-            <input type="checkbox" id="terminos" name="terminos">
-            <label for="terminos">Acepto los terminos y condiciones</label>
-            <br><br>
+      <div class="juegos">
 
-            <input type="submit" value="Crear cuenta">
-        </form>
-    </body>
+      <script src="script.js"></script>
+
+        <button class="boton_juego">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoKemHIhzi9ye-WjvxiYQ2lQtF-5Mn_rhlHOUyL5CZTMB-GEcY2PPWVps&s=10" alt="" />
+          <p>RULETA</p>
+        </button> 
+
+        <button class="boton_juego">
+          <img src="https://preview.redd.it/angry-birds-dice-v0-ad3pw80to09f1.jpeg?auto=webp&s=f65d89d38a3d08dc05d48cad3da588701d51258b" alt="" />
+          <p>DADOS</p>
+        </button>
+
+        <button class="boton_juego">
+          <img src="https://www.playcasino.com/es/img/slots/logo/fruit-cocktail-slot-logo_218_1778.png" alt="" />
+          <p>TRAGAMONEDAS</p>
+        </button>
+
+        <button class="boton_juego">
+          <img src="https://i.redd.it/s2zpp28kw1231.jpg" alt="" />
+          <p>BLACKJACK</p>
+        </button> 
+
+      </div> 
+
+      <h1>Crear una cuenta</h1> 
+
+      <form> 
+
+          <label for="nombre">Nombre:</label> 
+          <input type="text" id="nombre" 
+          name="nombre"> 
+          <br><br> 
+
+          <label for="apellido">Apellido:</label> 
+          <input type="text" id="apellido" 
+          name="apellido"> 
+          <br><br> 
+
+          <label for="correo">Correo electronico:</label> 
+          <input type="email" id="correo" 
+          name="correo"> 
+          <br><br> 
+
+          <label for="usuario">Nombre de usuario:</label> 
+          <input type="text" id="usuario" 
+          name="usuario"> 
+          <br><br> 
+
+          <label for="contrasena">Contraseña:</label> 
+          <input type="password" id="contrasena" 
+          name="contrasena"> 
+          <br><br> 
+
+          <label for="fecha">Fecha de nacimiento:</label> 
+          <input type="date" id="fecha" 
+          name="fecha"> 
+          <br><br> 
+
+          <label for="genero">Genero</label> 
+          <select id="genero" name="genero"> 
+               
+              <option value="masculino">Masculino</option> 
+              <option value="femenino">Femenino</option> 
+              <option value="prefiero no decirlo">prefiero no decirlo</option> 
+ 
+          </select> 
+ 
+          <br><br> 
+ 
+          <input type="checkbox" id="terminos" name="terminos"> 
+          <label for="terminos">Acepto los terminos y condiciones</label> 
+ 
+          <br><br> 
+ 
+          <input type="submit" value="Crear cuenta"> 
+ 
+      </form> 
+ 
+  </body> 
 </html>
