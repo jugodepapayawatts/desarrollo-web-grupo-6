@@ -1,19 +1,109 @@
-body{
-  padding: 25px;
-}
-.boton_juego{
-  padding: 25px;
-  border-radius: 25px;
-}
-.boton_juego img{
-  background-image: url(https://preview.redd.it/angry-birds-dice-v0-ad3pw80to09f1.jpeg?auto=webp&s=f65d89d38a3d08dc05d48cad3da588701d51258b);
-  width:100px;
-  height:100px;
-}
-.juegos{
-  display:grid;
-  grid-template-columns: 1fr 1fr ;
-  gap:200px;
+/* Cuerpo general */
+body {
+    background-color: #160b2e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
+/* Titulo principal */
+.title {
+    color: gold;
+    font-size: 40px;
+    margin-bottom: 5px;
+}
 
+/* bienvenida */
+body > p {
+    color: white;
+    font-size: 20px;
+}
+
+/* juegos disponibles */
+body > h2 {
+    color: gold;
+    margin-top: 40px;
+    font-size: 25px;
+}
+
+/* juegos de la pagina*/
+.juegos {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px;
+}
+
+/* Botones de los juegos */
+.boton_juego {
+    width: 180px;
+    height: 280px;
+    background-color: black;
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Efecto para los botones */
+.boton_juego:hover {
+    transform: scale(1.25);
+}
+
+/* Imagen de los juegos*/
+.boton_juego img {
+    width: 150px;
+    height: 190px;
+    border-radius: 10px;
+}
+
+/* nombre del juego */
+.boton_juego p {
+    color: gold;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* titulo de crear cuenta */
+body > h1:not(.title) {
+    color: gold;
+    margin-top: 50px;
+}
+
+/* formulario para ingresar*/
+form {
+    background-color:black;
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 25px;
+    max-width: 450px;
+    margin: 20px auto;
+}
+
+/* bloques para escribir */
+form label {
+    color: white;
+}
+
+/* bloques para escribir */
+input, select {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* boton para crear la cuenta */
+input[type="submit"] {
+    background-color: gold;
+    color: black;
+    font-size: 18px;
+    padding: 20px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Efecto del boton de crear cuenta*/
+input[type="submit"]:hover {
+    transform: scale(1.05);
+}
