@@ -7,89 +7,172 @@
   </head>
 
   <body>
-      <h1 class="title"> CASINO NOVA </h1>
-      <p>Bienvenido a nuestro casino online</p>
-      <h2>Juegos disponibles:</h2>
+    <!--Boton de inicio sesion-->
+    <div class="barra_superior">
+        <a href="#login" class="boton_inicio">Iniciar sesion</a>
+    </div>
 
-      <div class="juegos">
+<!--Barrita para moverse-->
+<div class="moverse">
+<a href="#inicio">Inicio</a>
+<a href="#juegos">Juegos</a>
+<a href="#perfil">Perfil</a>
+</div>
 
-      <script src="script.js"></script>
+<!-- Titulos y bienvenida-->
+<h1 class="title" id="inicio">CASINO NOVA</h1>
+  <div class="promocion">
+    <h2>¡Bienvenido a Casino Online!</h2>
+    <p>Disfruta de nuestros juegos y descubre tu favorito.</p>
+</div>
 
-        <button class="boton_juego">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoKemHIhzi9ye-WjvxiYQ2lQtF-5Mn_rhlHOUyL5CZTMB-GEcY2PPWVps&s=10" alt="" />
-          <p>Ruleta</p>
-        </button> 
+<h2>Juegos disponibles:</h2>
 
-        <button class="boton_juego">
-          <img src="https://preview.redd.it/angry-birds-dice-v0-ad3pw80to09f1.jpeg?auto=webp&s=f65d89d38a3d08dc05d48cad3da588701d51258b" alt="" />
-          <p>Dados</p>
-        </button>
+  <div class="juegos" id="juegos">
 
-        <button class="boton_juego">
-          <img src="https://www.playcasino.com/es/img/slots/logo/fruit-cocktail-slot-logo_218_1778.png" alt="" />
-          <p>Tragamonedas</p>
-        </button>
+    <button class="boton_juego">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoKemHIhzi9ye-WjvxiYQ2lQtF-5Mn_rhlHOUyL5CZTMB-GEcY2PPWVps&s=10" alt="" />
+      <p>Ruleta</p>
+    </button> 
 
-        <button class="boton_juego">
-          <img src="https://i.redd.it/s2zpp28kw1231.jpg" alt="" />
-          <p>BlackJack</p>
-        </button> 
+    <button class="boton_juego">
+      <img src="https://preview.redd.it/angry-birds-dice-v0-ad3pw80to09f1.jpeg?auto=webp&s=f65d89d38a3d08dc05d48cad3da588701d51258b" alt="" />
+      <p>Dados</p>
+    </button>
 
-      </div> 
+    <button class="boton_juego">
+      <img src="https://www.playcasino.com/es/img/slots/logo/fruit-cocktail-slot-logo_218_1778.png" alt="" />
+      <p>Tragamonedas</p>
+    </button>
 
-      <h1>Crear una cuenta</h1> 
+    <button class="boton_juego">
+      <img src="https://i.redd.it/s2zpp28kw1231.jpg" alt="" /> 
+      <p>BlackJack</p> 
+    </button>  
 
-      <form> 
+  </div>  
 
-          <label for="nombre">Nombre:</label> 
-          <input type="text" id="nombre" 
-          name="nombre"> 
-          <br><br> 
+  <!--Reglas y informacion--> 
+  <div class="informacion"> 
 
-          <label for="apellido">Apellido:</label> 
-          <input type="text" id="apellido" 
-          name="apellido"> 
-          <br><br> 
+    <h2>Informacion de nuestros juegos</h2> 
+    <p><b>Ruleta:</b> seleccionar una opción y esperar el resultado.</p> 
+    <p><b>Dados:</b> obtener un resultado mediante dos dados.</p> 
+    <p><b>Tragamonedas:</b> obtener una combinación de símbolos.</p> 
+    <p><b>BlackJack:</b> intentar acercarse al valor objetivo sin superarlo.</p> 
+    <p><b>Probabilidades:</b> dependen del juego y sus posibles resultados.</p> 
+    <p><b>Límite:</b> máximo 10 créditos ficticios por partida.</p> 
 
-          <label for="correo">Correo electronico:</label> 
-          <input type="email" id="correo" 
-          name="correo"> 
-          <br><br> 
+  </div> 
 
-          <label for="usuario">Nombre de usuario:</label> 
-          <input type="text" id="usuario" 
-          name="usuario"> 
-          <br><br> 
+  <!--Perfil--> 
+  <div class="panel" id="perfil"> 
 
-          <label for="contrasena">Contraseña:</label> 
-          <input type="password" id="contrasena" 
-          name="contrasena"> 
-          <br><br> 
+    <h2>Perfil del jugador</h2> 
+    <p>Usuario: Benjaja78</p> 
+    <p>Saldo: 1000 créditos</p> 
 
-          <label for="fecha">Fecha de nacimiento:</label> 
-          <input type="date" id="fecha" 
-          name="fecha"> 
-          <br><br> 
+    <h3>Actividad reciente</h3> 
+    <p>Última actividad: Ruleta</p> 
+    <p>Partidas realizadas: 67</p> 
 
-          <label for="genero">Genero</label> 
-          <select id="genero" name="genero"> 
-               
-              <option value="masculino">Masculino</option> 
-              <option value="femenino">Femenino</option> 
-              <option value="prefiero no decirlo">prefiero no decirlo</option> 
- 
-          </select> 
- 
-          <br><br> 
- 
-          <input type="checkbox" id="terminos" name="terminos"> 
-          <label for="terminos">Acepto los terminos y condiciones</label> 
- 
-          <br><br> 
- 
-          <input type="submit" value="Crear cuenta"> 
- 
-      </form> 
- 
-  </body> 
+    <h3>Estadísticas</h3> 
+    <p>Partidas jugadas: 67</p> 
+    <p>Partidas ganadas: 4</p> 
+    <p>Partidas perdidas: 63</p> 
+
+    <h3>Volver</h3> 
+    <a class="boton" href="#juegos">Ver juegos</a> 
+    <a class="boton" href="#inicio">Inicio</a> 
+
+  </div> 
+
+  <h1>Crear una cuenta</h1>  
+
+  <form>  
+
+      <label for="nombre">Nombre:</label>  
+      <input type="text" id="nombre"  
+      name="nombre">  
+      <br><br>  
+
+      <label for="apellido">Apellido:</label>  
+      <input type="text" id="apellido"  
+      name="apellido">  
+      <br><br>  
+
+      <label for="correo">Correo electronico:</label>  
+      <input type="email" id="correo"  
+      name="correo">  
+      <br><br>  
+
+      <label for="usuario">Nombre de usuario:</label>  
+      <input type="text" id="usuario"  
+      name="usuario">  
+      <br><br>  
+
+      <label for="contrasena">Contraseña:</label>  
+      <input type="password" id="contrasena"  
+      name="contrasena">  
+      <br><br>  
+
+      <label for="fecha">Fecha de nacimiento:</label>  
+      <input type="date" id="fecha"  
+      name="fecha">  
+      <br><br>  
+
+      <label for="genero">Genero</label>  
+      <select id="genero" name="genero">  
+            
+          <option value="masculino">Masculino</option>  
+          <option value="femenino">Femenino</option>  
+          <option value="prefiero no decirlo">prefiero no decirlo</option>  
+
+      </select>  
+
+      <br><br>  
+
+      <input type="checkbox" id="terminos" name="terminos">  
+      <label for="terminos">Acepto los terminos y condiciones</label>  
+
+      <br><br>  
+
+      <input type="submit" value="Crear cuenta">  
+
+  </form>  
+
+<!-- Inicio de sesion --> 
+    <div class="panel" id="login"> 
+
+    <h2>Inicio de sesión (jugadors)</h2> 
+
+    <label for="usuario_login">Usuario:</label> 
+
+    <input type="text" id="usuario_login" name="usuario_login"> 
+
+    <br><br> 
+
+    <label for="clave_login">Contraseña:</label> 
+
+    <input type="password" id="clave_login" name="clave_login"> 
+
+    <br><br> 
+
+    <input type="submit" value="Ingresar"> 
+
+</div>
+
+   <!-- Detalle de tu juego --> 
+<div class="informacion"> 
+
+    <h2>Detalle del juego: Ruleta</h2> 
+
+    <p><b>Reglas:</b>el jugador selecciona una opción y espera el resultado de la ruleta.</p> 
+
+    <p><b>Probabilidad de referencia:</b>Depende de la opción seleccionada.</p> 
+
+    <p><b>Límite:</b>10 créditos por partida.</p> 
+</div> 
+
+  </body>  
 </html>
