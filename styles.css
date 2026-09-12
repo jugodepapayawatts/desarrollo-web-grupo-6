@@ -48,7 +48,7 @@ body > h2 {
 
 /* Efecto para los botones */
 .boton_juego:hover {
-    transform: scale(1.25);
+    transform: scale(1.05);
 }
 
 /* Imagen de los juegos*/
@@ -73,7 +73,7 @@ body > h1:not(.title) {
 
 /* formulario para ingresar*/
 form {
-    background-color:black;
+    background-color: black;
     border: 2px solid gold;
     border-radius: 10px;
     padding: 25px;
@@ -105,5 +105,91 @@ input[type="submit"] {
 
 /* Efecto del boton de crear cuenta*/
 input[type="submit"]:hover {
+    transform: scale(1.05);
+}
+
+.barra_superior {
+    text-align: right;
+}
+
+/* Boton inicio*/
+.boton_inicio {
+    background-color: gold;
+    color: black;
+    font-size: 18px;
+    padding: 20px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.boton_inicio:hover {
+    transform: scale(1.05);
+}
+
+/* Barra para moverse */
+.moverse {
+    margin: 20px;
+}
+
+.moverse a {
+    color: gold;
+    margin: 20px;
+    font-weight: bold;
+}
+
+/* Perfil jugador */
+.panel {
+    background-color: black;
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.panel h2 {
+    color: gold;
+}
+
+.panel h3 {
+    color: gold;
+}
+
+.panel p {
+    font-size: 18px;
+}
+
+/* Informacion juegos */
+.informacion {
+    background-color: black;
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 30px auto;
+}
+
+.informacion h2 {
+    color: gold;
+}
+
+.informacion p {
+    font-size: 20px;
+}
+
+/* Volver */
+.boton {
+    background-color: gold;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    display: inline-block;
+    margin: 10px;
+}
+
+.boton:hover {
     transform: scale(1.05);
 }
