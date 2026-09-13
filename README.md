@@ -1,7 +1,7 @@
 # Proyecto Desarrollo-web: casino nova
 
 ## Descripcion
-E este proyecto se creo una pagina de casino ficticia con creditos falsos y apuestas reales, este proyecto no tiene uso practico
+En este proyecto se creo una pagina de casino ficticia con creditos falsos y apuestas reales, este proyecto no tiene uso practico
 real ya que esta enfocado principalmente en la practica de creacion de paginas web.
 
 ## Tecnologias utilizadas
