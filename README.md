@@ -68,3 +68,11 @@ Nginx se utiliza como servidor web para mostrar los archivos
 HTML y CSS del proyecto.
 
 ## autores
+Benja Muñoz.
+Jose Pablo.
+Vicente Gallardo.
+
+## Consideraciones
+Actualmente, los formularios de registro e inicio de sesión corresponden solamente a una interfaz visual. No cuentan con conexión a una base de datos ni con un sistema de autenticación funcional.
+
+Los juegos también se presentan como elementos visuales y no incluyen una lógica de juego implementada.
