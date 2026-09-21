@@ -84,4 +84,4 @@ Vicente Gallardo.
 ## Consideraciones
 
 Actualmente, los formularios de registro e inicio de sesión corresponden solamente
-n una lógica de juego implementada.
+a una visualizacion, en otras palabras: no hacen nada.
