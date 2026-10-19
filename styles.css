@@ -122,6 +122,7 @@ input[type="submit"]:hover {
     font-weight: bold;
     cursor: pointer;
     display: inline-block;
+    margin-left: 80px;
 }
 
 .boton_inicio:hover {
