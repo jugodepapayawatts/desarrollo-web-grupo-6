@@ -1,0 +1,114 @@
+body {
+    text-align: center;
+    background-color: #160b2e;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    color: gold;
+    font-size: 40px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: gold;
+    font-size: 25px;
+    margin-top: 25px;
+}
+
+#dealer-cards {
+    margin: 15px;
+    min-height: 180px;
+}
+
+#player-cards {
+    margin: 15px;
+    min-height: 180px;
+}
+
+#dealer-cards img {
+    height: 180px;
+    width: 130px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+#player-cards img {
+    height: 180px;
+    width: 130px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+#pedir {
+    height: 50px;
+    width: 100px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#plantar {
+    height: 50px;
+    width: 100px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#pedir:hover,
+#plantar:hover,
+#reintentar:hover,
+#volver_inicio:hover {
+    background-color: #e6bd00;
+    transform: scale(1.05);
+}
+
+#resultadoss {
+    color: gold;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+#reintentar {
+    height: 50px;
+    width: 100px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+    top: 10px;
+}
+
+#volver_inicio {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    height: 40px;
+    padding: 0 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+}
