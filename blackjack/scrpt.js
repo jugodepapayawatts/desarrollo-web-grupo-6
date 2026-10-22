@@ -141,12 +141,15 @@ class BlackjackGame {
         if(!this.#canHit) return;
 
         let card = this.#deck.popCard();
-        this.#player.addCard(card);
-        this.renderCard("player-cards", card);
-        if(this.#player.getAdjustedScore() > 21){
-            this.#canHit = false;
-        }
-        document.getElementById("player-sum").innerText = this.#player.getAdjustedScore();
+            this.#player.addCard(card);
+            this.renderCard("player-cards", card);
+        if (this.#player.getAdjustedScore() > 21) {
+            this.stay();
+        return;
+}
+
+        document.getElementById("player-sum").innerText =
+            this.#player.getAdjustedScore();
     }
 
     stay(){
