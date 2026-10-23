@@ -53,6 +53,11 @@ button:hover {
   background: #10532c;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 button:focus, select:focus, input:focus {
   outline: 3px solid #8ab9ff;
   outline-offset: 2px;
