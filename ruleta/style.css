@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  color: #222;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.panel {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+select, input, button {
+  width: 100%;
+  padding: 11px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 18px;
+  border: 0;
+  border-radius: 5px;
+  background: #176b3a;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #10532c;
+}
+
+button:focus, select:focus, input:focus {
+  outline: 3px solid #8ab9ff;
+  outline-offset: 2px;
+}
+
+#mensaje {
+  min-height: 22px;
+}
+
+#numero-ganador {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#historial {
+  padding-left: 22px;
+}
+
+@media (max-width: 390px) {
+  body {
+    padding: 12px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+}
