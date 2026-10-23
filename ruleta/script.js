@@ -62,7 +62,7 @@ function mostrarHistorial() {
   });
 }
 
-botonGirar.addEventListener("click", function() {
+async function realizarApuesta() {
   const monto = Number(montoInput.value);
   const apuesta = tipoApuesta.value;
 
@@ -84,34 +84,65 @@ botonGirar.addEventListener("click", function() {
   }
 
   botonGirar.disabled = true;
-  mensaje.textContent = "Girando la ruleta...";
+  mensaje.textContent = "Cargando resultados...";
 
-  // Simula una ronda y genera un número europeo entre 0 y 36.
-  const numero = Math.floor(Math.random() * 37);
-  const color = obtenerColor(numero);
-  const gano = ganoApuesta(numero, apuesta);
+  try {
+    // Se solicitan los números disponibles
+    const respuesta = await fetch("resultados.json", { cache: "no-store" });
 
-  saldo -= monto;
+    if (!respuesta.ok) {
+      throw new Error("No se pudo obtener el archivo de resultados.");
+    }
 
-  if (gano) {
-    saldo += monto * 2;
-    detalleResultado.textContent = `¡Ganaste! Recibes ${formatoDinero(monto * 2)}.`;
-  } else {
-    detalleResultado.textContent = `Perdiste ${formatoDinero(monto)}.`;
+    const numeros = await respuesta.json();
+
+    // Estado de respuesta vacía por si no hay números
+    if (!Array.isArray(numeros) || numeros.length === 0) {
+      mensaje.textContent = "No hay resultados disponibles. Intenta más tarde.";
+      numeroGanador.textContent = "Sin resultados";
+      detalleResultado.textContent = "";
+      return;
+    }
+
+    const numero = numeros[Math.floor(Math.random() * numeros.length)];
+
+    if (!Number.isInteger(numero) || numero < 0 || numero > 36) {
+      throw new Error("Los datos recibidos no son válidos.");
+    }
+
+    const color = obtenerColor(numero);
+    const gano = ganoApuesta(numero, apuesta);
+
+    saldo -= monto;
+
+    if (gano) {
+      saldo += monto * 2;
+      detalleResultado.textContent = `¡Ganaste! Recibes ${formatoDinero(monto * 2)}.`;
+    } else {
+      detalleResultado.textContent = `Perdiste ${formatoDinero(monto)}.`;
+    }
+
+    numeroGanador.textContent = `Número ${numero} - ${color}`;
+    mensaje.textContent = gano ? "Apuesta ganadora." : "Apuesta perdida.";
+
+    rondas.unshift({
+      numero: numero,
+      color: color,
+      resultado: gano ? "Ganada" : "Perdida"
+    });
+
+    actualizarSaldo();
+    mostrarHistorial();
+    montoInput.value = "";
+
+  } catch (error) {
+    // Estado de error por si no hay conexión o falla la solicitud
+    mensaje.textContent = "Error al cargar los resultados. Revisa tu conexión e intenta nuevamente.";
+    numeroGanador.textContent = "No se pudo obtener el resultado";
+    detalleResultado.textContent = "";
+  } finally {
+    botonGirar.disabled = false;
   }
+}
 
-  numeroGanador.textContent = `Número ${numero} - ${color}`;
-  mensaje.textContent = gano ? "Apuesta ganadora." : "Apuesta perdida.";
-
-  rondas.unshift({
-    numero: numero,
-    color: color,
-    resultado: gano ? "Ganada" : "Perdida"
-  });
-
-  actualizarSaldo();
-  mostrarHistorial();
-
-  montoInput.value = "";
-  botonGirar.disabled = false;
-});
+botonGirar.addEventListener("click", realizarApuesta);
