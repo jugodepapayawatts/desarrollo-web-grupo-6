@@ -4,86 +4,99 @@
 
 body {
   margin: 0;
-  padding: 24px;
+  padding: 20px;
   font-family: Arial, sans-serif;
-  background: #160b2e;
-  color: #222;
+  background-color: #160b2e;
+  color: white;
+  text-align: center;
 }
-
-main > h1{
-  
-  color: gold;
-  font-size: 40px;
-  margin-bottom: 5px;
-
-}
-
-
 
 .contenedor {
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
-  background:black;
   padding: 20px;
-  color: gold;
+  background-color: black;
   border: 2px solid gold;
+  border-radius: 8px;
 }
 
-h1, h2, p {
-  text-align: center;
+h1 {
   color: gold;
+  font-size: 40px;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: gold;
+  font-size: 25px;
+  margin-top: 25px;
+}
+
+p {
+  color: white;
 }
 
 .panel {
   margin-top: 20px;
   padding: 20px;
-  background:solid gold ;
-  border: 1px solid black;
-  border-radius: 8px;
+  background-color: black;
   border: 2px solid gold;
+  border-radius: 8px;
 }
 
 label {
   display: block;
   margin-top: 14px;
   margin-bottom: 6px;
-  color:gold;
+  color: gold;
 }
 
-select, input, button {
+select, input {
   width: 100%;
   padding: 11px;
   font-size: 16px;
   color: black;
-  background:gold;
+  background-color: white;
   border: 2px solid gold;
+  border-radius: 8px;
 }
 
 button {
-  margin-top: 18px;
-  border: 0;
-  border-radius: 5px;
-  background:gold;
+  min-height: 50px;
+  padding: 0 18px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: gold;
   color: black;
-  cursor: pointer;
   border: 2px solid gold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 button:hover {
-  background: black;
-  color: gold;
-  
+  background-color: #e6bd00;
+  transform: scale(1.05);
 }
 
 button:disabled {
-  opacity: 0.6;
-  cursor: wait;
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
 }
 
-button:focus, select:focus, input:focus {
+button:focus-visible, select:focus-visible, input:focus-visible {
   outline: 3px solid #8ab9ff;
   outline-offset: 2px;
+}
+
+#volver_inicio {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
 }
 
 #mensaje {
@@ -91,6 +104,7 @@ button:focus, select:focus, input:focus {
 }
 
 #numero-ganador {
+  color: gold;
   text-align: center;
   font-size: 28px;
   font-weight: bold;
@@ -98,14 +112,25 @@ button:focus, select:focus, input:focus {
 
 #historial {
   padding-left: 22px;
+  text-align: left;
 }
 
-@media (max-width: 390px) {
+@media (max-width: 600px) {
   body {
-    padding: 12px;
+    padding: 70px 12px 12px;
   }
 
-  .panel {
+  .contenedor, .panel {
     padding: 14px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  #btn-girar {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
 }

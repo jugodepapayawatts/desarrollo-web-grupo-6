@@ -194,3 +194,46 @@ input[type="submit"]:hover {
 .boton:hover {
     transform: scale(1.05);
 }
+
+
+/* Adaptar a pantallas */
+.juegos {
+    flex-wrap: wrap;
+}
+
+img {
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
+    }
+
+    .juegos {
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 390px) {
+    .boton_juego {
+        width: 150px;
+        height: 245px;
+    }
+
+    .boton_juego img {
+        max-width: 100%;
+        height: 160px;
+        object-fit: contain;
+    }
+}
+
+.boton_juego:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

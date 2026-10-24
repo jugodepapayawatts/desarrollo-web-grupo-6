@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,8 +10,8 @@
        
   <div class="panel" id="perfil"> 
 
-    <h2>Perfil del jugador</h2> 
-    <p>Usuario: Benjaja78</p> 
+    <h2>Perfil del jugador</h2>    
+    <p>Usuario: <span id="nombre_usuario">Invitado</span></p>
     <p>Saldo: <span id="saldo">0</span> creditos</p>
 
     <h3>Actividad reciente</h3> 
@@ -50,6 +51,13 @@
       document.getElementById("partidas_jugadas").textContent=estadisticas.partidasJugadas;
       document.getElementById("partidas_ganadas").textContent=estadisticas.partidasGanadas;
       document.getElementById("partidas_perdidas").textContent=estadisticas.partidasPerdidas;
+
+      
+      const usuarioGuardado = sessionStorage.getItem("usuarioCasino");
+      if (usuarioGuardado !== null) {
+      document.getElementById("nombre_usuario").textContent = usuarioGuardado;
+    }
+
     </script>
     </body>
 </html>
