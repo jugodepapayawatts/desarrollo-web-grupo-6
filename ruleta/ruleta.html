@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ruleta</title>
   <link rel="stylesheet" href="style.css">
+  <script src="../Saldo.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
-  <body>
-  <button id="volver_inicio" onclick="window.location.href='../index.html'">Volver</button>
+  
   <main class="contenedor">
-    <h1>Bienvenido a la Ruleta</h1>
+     <button id="volver_inicio" onclick="window.location.href='../index.html'">Volver</button>
+  <h1>Bienvenido a la Ruleta</h1>
+    <h1>Casino Nova</h1>
 
     <label for="juego">Selecciona un juego</label>
     <select id="juego">
@@ -19,7 +21,7 @@
     </select>
 
     <section class="panel">
-      <p>Saldo disponible: <strong id="saldo">$10.000</strong></p>
+      <p>Saldo disponible: <strong id="saldo"></strong></p>
 
       <label for="tipo-apuesta">Tipo de apuesta</label>
       <select id="tipo-apuesta">
@@ -48,6 +50,7 @@
       <h2>Historial</h2>
       <ul id="historial">
         <li>No hay rondas jugadas.</li>
+      
       </ul>
     </section>
   </main>

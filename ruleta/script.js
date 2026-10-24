@@ -8,10 +8,12 @@ const numeroGanador = document.getElementById("numero-ganador");
 const detalleResultado = document.getElementById("detalle-resultado");
 const historial = document.getElementById("historial");
 
-let saldo = 10000;
+let saldo = obtenerSaldo();
 let rondas = [];
 
 const rojos = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+
+actualizarSaldo();
 
 function formatoDinero(cantidad) {
   return "$" + cantidad.toLocaleString("es-CL");
@@ -117,10 +119,14 @@ async function realizarApuesta() {
 
     if (gano) {
       saldo += monto * 2;
+       guardarSaldo(saldo);//poner cuando se altera el saldo
       detalleResultado.textContent = `¡Ganaste! Recibes ${formatoDinero(monto * 2)}.`;
     } else {
       detalleResultado.textContent = `Perdiste ${formatoDinero(monto)}.`;
+       guardarSaldo(saldo);
     }
+    registrarPartida("Ruleta", gano ? "ganada" : "perdida");//poner al final de todo juego para contar los juegos totales
+   
 
     numeroGanador.textContent = `Número ${numero} - ${color}`;
     mensaje.textContent = gano ? "Apuesta ganadora." : "Apuesta perdida.";

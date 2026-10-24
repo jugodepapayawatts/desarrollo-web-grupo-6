@@ -1,26 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
     <head>
-      <meta charset="UTF-8" />
-        <title> Perfil -Casino Nova </title>
+        <title> Juegos -Casino Nova </title>
        <link rel="stylesheet" href="styles.css" /> 
+
     </head>
     <body>
        
   <div class="panel" id="perfil"> 
 
-    <h1>Perfil del jugador</h1> 
+    <h2>Perfil del jugador</h2> 
     <p>Usuario: Benjaja78</p> 
-    <p>Saldo: 1000 créditos</p> 
+    <p>Saldo: <span id="saldo">0</span> creditos</p>
 
     <h3>Actividad reciente</h3> 
-    <p>Última actividad: Ruleta</p> 
-    <p>Partidas realizadas: 67</p> 
+    <p>Ultima actividad: <span id="ultima_actividad">Ninguna</span></p> 
+    <p>Partidas realizadas: <span id="partidas_realizadas">0</span></p> 
 
-    <h3>Estadísticas</h3> 
-    <p>Partidas jugadas: 67</p> 
-    <p>Partidas ganadas: 4</p> 
-    <p>Partidas perdidas: 63</p> 
+    <h3>Estadisticas</h3> 
+    <p>Partidas totales: <span id="partidas_jugadas">0</span></p> 
+    <p>Partidas ganadas: <span id="partidas_ganadas">0</span></p> 
+    <p>Partidas perdidas: <span id="partidas_perdidas">0</span></p> 
 
     <h3>Volver</h3> 
     <a class="boton" href="Juego.html" class="boton_inicio">Ver juegos</a> 
@@ -28,5 +28,28 @@
 
   </div> 
 
+    <script src="Saldo.js"></script>
+    <script>
+      //actualizar saldo
+      function actualizarSaldoPerfil() {
+        document.getElementById("saldo").textContent = obtenerSaldo();
+      }
+
+      window.addEventListener("pageshow", actualizarSaldoPerfil);
+      window.addEventListener("storage", function(evento) {
+        if (evento.key === "casinoSaldo" || evento.key === null) {
+          actualizarSaldoPerfil();
+        }
+      });
+
+      actualizarSaldoPerfil();
+      //actualizar estadisticas
+      const estadisticas=obtenerEstadisticas();
+      document.getElementById("ultima_actividad").textContent=estadisticas.ultimaActividad;
+      document.getElementById("partidas_realizadas").textContent=estadisticas.partidasJugadas;
+      document.getElementById("partidas_jugadas").textContent=estadisticas.partidasJugadas;
+      document.getElementById("partidas_ganadas").textContent=estadisticas.partidasGanadas;
+      document.getElementById("partidas_perdidas").textContent=estadisticas.partidasPerdidas;
+    </script>
     </body>
 </html>
