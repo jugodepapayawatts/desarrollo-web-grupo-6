@@ -4,6 +4,7 @@ body {
     color: white;
     font-family: Arial, sans-serif;
     padding: 20px;
+    margin: 0;
 }
 
 h1 {
@@ -18,33 +19,36 @@ h2 {
     margin-top: 25px;
 }
 
-#dealer-cards {
-    margin: 15px;
-    min-height: 180px;
-}
-
+#dealer-cards,
 #player-cards {
-    margin: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px auto;
     min-height: 180px;
+    max-width: 900px;
 }
 
-#dealer-cards img {
-    height: 180px;
-    width: 130px;
-    margin: 5px;
-    border-radius: 5px;
-}
-
+#dealer-cards img,
 #player-cards img {
     height: 180px;
     width: 130px;
     margin: 5px;
     border-radius: 5px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    object-fit: cover;
+    background: #fff;
 }
 
-#pedir {
+#pedir,
+#plantar,
+#reintentar,
+#volver_inicio {
     height: 50px;
-    width: 100px;
+    min-width: 110px;
+    padding: 0 18px;
     font-size: 18px;
     font-weight: bold;
     background-color: gold;
@@ -53,19 +57,7 @@ h2 {
     border-radius: 8px;
     cursor: pointer;
     margin: 10px;
-}
-
-#plantar {
-    height: 50px;
-    width: 100px;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: gold;
-    color: black;
-    border: 2px solid gold;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 10px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 #pedir:hover,
@@ -76,6 +68,12 @@ h2 {
     transform: scale(1.05);
 }
 
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
 #resultadoss {
     color: gold;
     font-size: 28px;
@@ -83,32 +81,9 @@ h2 {
     margin-top: 20px;
 }
 
-#reintentar {
-    height: 50px;
-    width: 100px;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: gold;
-    color: black;
-    border: 2px solid gold;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 10px;
-    top: 10px;
-}
-
 #volver_inicio {
     position: fixed;
     top: 10px;
     left: 10px;
-    height: 40px;
-    padding: 0 15px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: gold;
-    color: black;
-    border: 2px solid gold;
-    border-radius: 8px;
-    cursor: pointer;
     z-index: 1000;
 }
