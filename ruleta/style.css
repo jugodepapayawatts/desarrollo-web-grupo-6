@@ -1,88 +1,136 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
-  margin: 0;
-  padding: 24px;
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-  color: #222;
+    background-color: #160b2e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
 .contenedor {
-  width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
+    max-width: 520px;
+    margin: 0 auto;
 }
 
 h1, h2 {
-  text-align: center;
+    color: gold;
+    text-align: center;
+}
+
+h1 {
+    font-size: 40px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 25px;
 }
 
 .panel {
-  margin-top: 20px;
-  padding: 20px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+    background-color: black;
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 30px auto;
 }
 
 label {
-  display: block;
-  margin-top: 14px;
-  margin-bottom: 6px;
+    display: block;
+    color: white;
+    margin-top: 15px;
+    margin-bottom: 8px;
 }
 
-select, input, button {
-  width: 100%;
-  padding: 11px;
-  font-size: 16px;
+select, input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
+/* Botones */
 button {
-  margin-top: 18px;
-  border: 0;
-  border-radius: 5px;
-  background: #176b3a;
-  color: white;
-  cursor: pointer;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 button:hover {
-  background: #10532c;
+    background-color: #e6bd00;
+    transform: scale(1.05);
 }
 
 button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-button:focus, select:focus, input:focus {
-  outline: 3px solid #8ab9ff;
-  outline-offset: 2px;
-}
-
-#mensaje {
-  min-height: 22px;
+    opacity: 0.6;
+    cursor: wait;
 }
 
 #numero-ganador {
-  text-align: center;
-  font-size: 28px;
-  font-weight: bold;
+    color: gold;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#mensaje {
+    min-height: 22px;
 }
 
 #historial {
-  padding-left: 22px;
+    text-align: left;
+    padding-left: 25px;
 }
 
-@media (max-width: 390px) {
-  body {
-    padding: 12px;
-  }
+#historial li {
+    margin-bottom: 10px;
+}
 
-  .panel {
-    padding: 14px;
-  }
+
+input:focus, select:focus, button:focus {
+    outline: 2px solid gold;
+}
+
+@media (max-width: 500px) {
+    body {
+        padding: 10px;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+#volver_inicio {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    height: 40px;
+    width: auto;
+    padding: 0 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#volver_inicio:hover {
+    background-color: #e6bd00;
+    transform: scale(1.05);
 }
