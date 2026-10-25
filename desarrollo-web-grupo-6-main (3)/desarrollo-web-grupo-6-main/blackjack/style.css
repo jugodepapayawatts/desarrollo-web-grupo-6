@@ -1,0 +1,111 @@
+body {
+    text-align: center;
+    background-color: #160b2e;
+    color: white;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin: 0;
+}
+
+h1 {
+    color: gold;
+    font-size: 40px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: gold;
+    font-size: 25px;
+    margin-top: 25px;
+}
+
+#dealer-cards,
+#player-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px auto;
+    min-height: 180px;
+    max-width: 900px;
+}
+
+#dealer-cards img,
+#player-cards img {
+    height: 180px;
+    width: 130px;
+    margin: 5px;
+    border-radius: 5px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    object-fit: cover;
+    background: #fff;
+}
+
+#pedir,
+#plantar,
+#reintentar,
+#btn-apostar,
+#volver_inicio
+ {
+    height: 50px;
+    min-width: 110px;
+    padding: 0 18px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: gold;
+    color: black;
+    border: 2px solid gold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+#pedir:hover,
+#plantar:hover,
+#reintentar:hover,
+#btn-apostar:hover,
+#volver_inicio:hover {
+    background-color: #e6bd00;
+    transform: scale(1.05);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#resultadoss {
+    color: gold;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+#volver_inicio {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+.panel {
+    background-color: #1a0f3b;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    margin-bottom: 20px;
+}
+
+#saldo-disponible,
+#saldo,
+#label-monto {
+    color: gold;
+}
+
+.instruccion-apuesta {
+    color: gold;
+    font-size: 20px;
+    font-weight: bold;
+}

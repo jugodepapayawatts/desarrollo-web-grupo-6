@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruleta</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="../Saldo.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  
+  <main class="contenedor">
+     <button id="volver_inicio" onclick="window.location.href='../index.html'">Volver</button>
+  <h1>Bienvenido a la Ruleta</h1>
+    <h1>Casino Nova</h1>
+
+    <label for="juego">Selecciona un juego</label>
+    <select id="juego">
+      <option value="ruleta">Ruleta Europea</option>
+    </select>
+
+    <section class="panel">
+      <p>Saldo disponible: <strong id="saldo"></strong></p>
+
+      <label for="tipo-apuesta">Tipo de apuesta</label>
+      <select id="tipo-apuesta">
+        <option value="rojo">Rojo</option>
+        <option value="negro">Negro</option>
+        <option value="par">Par</option>
+        <option value="impar">Impar</option>
+        <option value="bajo">Bajo (1-18)</option>
+        <option value="alto">Alto (19-36)</option>
+      </select>
+
+      <label for="monto">Monto de la apuesta</label>
+      <input id="monto" type="number" min="1" step="1" placeholder="Ej: 1000">
+
+      <button id="btn-girar">Realizar apuesta y girar ruleta</button>
+      <p id="mensaje" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel resultado">
+      <h2>Resultado</h2>
+      <p id="numero-ganador">Todavía no hay resultados</p>
+      <p id="detalle-resultado"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Historial</h2>
+      <ul id="historial">
+        <li>No hay rondas jugadas.</li>
+      
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
