@@ -128,8 +128,8 @@ class BlackjackGame {
             this.renderCard("player-cards", card);
         }
         //Conexión con elementos y acciones HTML (pedir, plantar)
-        document.getElementById("pedir").onclick = () => this.hit();
-        document.getElementById("plantar").onclick = () => this.stay();
+        document.getElementById("pedir").onclick = () => this.pedir();
+        document.getElementById("plantar").onclick = () => this.plantar();
 
         document.getElementById("pedir").disabled = true;
         document.getElementById("plantar").disabled = true;
@@ -137,22 +137,30 @@ class BlackjackGame {
         document.getElementById("player-sum").innerText = this.#player.getAdjustedScore();
     }
 
-    hit(){
-        if(!this.#canHit) return;
+    pedir(){
+        if(!this.#canHit || !partidaEnCurso) return;
 
         let card = this.#deck.popCard();
             this.#player.addCard(card);
             this.renderCard("player-cards", card);
-        if (this.#player.getAdjustedScore() > 21) {
+        if (this.#player.getAdjustedScore() >= 21) {
             this.stay();
-        return;
-}
+            return;
+        }
 
         document.getElementById("player-sum").innerText =
             this.#player.getAdjustedScore();
     }
 
-    stay(){
+    verificar21(){
+        if (this.#player.getAdjustedScore() === 21) {
+            this.stay();
+        }
+    }
+
+    plantar(){
+        if(!this.#canHit || !partidaEnCurso) return;
+
         this.#canHit = false;
         //Rvelar la carta oculta del dealer cambiando la imagen de BACK a la carta real
         this.#hiddenImgElement.src = `./cards/${this.#hiddenCard.getImageCode()}.png`;
@@ -197,8 +205,6 @@ class BlackjackGame {
             actualizarSaldo();
             partidaEnCurso = false;
             apuestaActual = 0;
-            btnApostar.disabled = false;
-            montoInput.disabled = false;
         }
 
         //Se actualizan las variables de HTML
@@ -207,6 +213,8 @@ class BlackjackGame {
         document.getElementById("resultadoss").innerText = message;
         document.getElementById("pedir").disabled = true;
         document.getElementById("plantar").disabled = true;
+        btnApostar.disabled = true;
+        montoInput.disabled = true;
         document.getElementById("reintentar").style.display = "inline-block";
         mensaje.textContent = `Resultado: ${message} Saldo disponible: ${saldoDisponible}.`;
     
@@ -232,7 +240,7 @@ function actualizarSaldo() {
     saldoElemento.textContent = saldoDisponible;
 }
 //funcion para validar el monto
-function validarMonto() {
+function validarMonto(game) {
     const apuesta = Number(montoInput.value);
     const montoValido =
         montoInput.value.trim() !== "" &&
@@ -259,6 +267,7 @@ function validarMonto() {
     btnApostar.disabled = true;
     montoInput.disabled = true;
     mensaje.textContent = "Apuesta aceptada. ¡Que comience el juego!";
+    game.verificar21();
 }
 
 //inicialización del juego al cargar la ventana
@@ -268,7 +277,7 @@ window.onload = function(){
     let game = new BlackjackGame();
     game.start();
 
-    btnApostar.addEventListener("click", validarMonto);
+    btnApostar.addEventListener("click", () => validarMonto(game));
     montoInput.addEventListener("input", function() {
         if (!partidaEnCurso) {
             btnPedir.disabled = true;
