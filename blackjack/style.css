@@ -45,7 +45,9 @@ h2 {
 #pedir,
 #plantar,
 #reintentar,
-#volver_inicio {
+#btn-apostar,
+#volver_inicio
+ {
     height: 50px;
     min-width: 110px;
     padding: 0 18px;
@@ -63,6 +65,7 @@ h2 {
 #pedir:hover,
 #plantar:hover,
 #reintentar:hover,
+#btn-apostar:hover,
 #volver_inicio:hover {
     background-color: #e6bd00;
     transform: scale(1.05);
@@ -86,4 +89,23 @@ button:disabled {
     top: 10px;
     left: 10px;
     z-index: 1000;
+}
+.panel {
+    background-color: #1a0f3b;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+    margin-bottom: 20px;
+}
+
+#saldo-disponible,
+#saldo,
+#label-monto {
+    color: gold;
+}
+
+.instruccion-apuesta {
+    color: gold;
+    font-size: 20px;
+    font-weight: bold;
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Novita</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="../Saldo.js" defer></script>
+    <script src="scrpt.js" defer></script>
+</head>
+<body>
+    <button id="volver_inicio" onclick="window.location.href='../index.html'">Volver</button>
+    
+        <h1>Bienvenido a Blackjack</h1>
+
+    <h2> Dealer: <span id="dealer-sum"></span> </h2>
+    <div id="dealer-cards">
+        <!-- <img src="./cards/BACK.png"> -->
+        <!-- <img src="./cards/2-C.png">  -->
+    </div>
+
+    <h2> Jugador: <span id="player-sum"></span> </h2>
+    <div id="player-cards">
+        <!-- <img src="./cards/4-H.png"> -->
+        <!-- <img src="./cards/3-C.png"> -->
+    </div>
+
+    <button id="pedir" disabled>Pedir</button>
+    <button id="plantar" disabled>Plantar</button>
+    <button id="reintentar" style="display: none;">Volver a intentar</button>
+
+<p id="resultadoss"></p>
+<section class="panel">
+    <p id="saldo-disponible">Saldo disponible: <strong id="saldo"></strong></p>
+    <p class="instruccion-apuesta">¡Realiza tu apuesta!</p>
+
+    <label id="label-monto" for="monto">Monto de la apuesta</label>
+    <input id="monto" type="number" min="1" step="1">
+
+    <button  id="btn-apostar">Realizar apuesta</button>
+    <p id="mensaje" role="status" aria-live="polite"></p>
+  </section>
+</body>
+</html>

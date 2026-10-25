@@ -131,8 +131,8 @@ class BlackjackGame {
         document.getElementById("pedir").onclick = () => this.hit();
         document.getElementById("plantar").onclick = () => this.stay();
 
-        document.getElementById("pedir").disabled = false;
-        document.getElementById("plantar").disabled = false;
+        document.getElementById("pedir").disabled = true;
+        document.getElementById("plantar").disabled = true;
         document.getElementById("reintentar").style.display = "none";
         document.getElementById("player-sum").innerText = this.#player.getAdjustedScore();
     }
@@ -166,17 +166,41 @@ class BlackjackGame {
         let playerFinalScore = this.#player.getAdjustedScore();
         let dealerFinalScore = this.#dealer.getAdjustedScore();
         let message = "";
+        let resultado = "";
         if (playerFinalScore > 21){
             message = "¡Perdiste Malaya!";
+            resultado = "perdida";
         }else if (dealerFinalScore > 21){
             message = "¡Ganaste viva España!";
+            resultado = "ganada";
         }else if (playerFinalScore === dealerFinalScore){
             message = "¡Empate!";
+            resultado = "empate";
         }else if (playerFinalScore > dealerFinalScore){
             message = "¡Ganaste viva España!";
+            resultado = "ganada";
         }else{
             message = "¡Perdiste Malaya!";
+            resultado = "perdida";
         }
+        //poner al final de todo juego para contar los juegos totales
+            registrarPartida("Blackjack", resultado);
+        
+        if (partidaEnCurso) {
+            if (resultado === "ganada") {
+                saldoDisponible += apuestaActual * 2;
+            } else if (resultado === "empate") {
+                saldoDisponible += apuestaActual;
+            }
+
+            guardarSaldo(saldoDisponible);
+            actualizarSaldo();
+            partidaEnCurso = false;
+            apuestaActual = 0;
+            btnApostar.disabled = false;
+            montoInput.disabled = false;
+        }
+
         //Se actualizan las variables de HTML
         document.getElementById("dealer-sum").innerText = dealerFinalScore;
         document.getElementById("player-sum").innerText = playerFinalScore;
@@ -184,6 +208,7 @@ class BlackjackGame {
         document.getElementById("pedir").disabled = true;
         document.getElementById("plantar").disabled = true;
         document.getElementById("reintentar").style.display = "inline-block";
+        mensaje.textContent = `Resultado: ${message} Saldo disponible: ${saldoDisponible}.`;
     
     }
     renderCard(containerId, card){
@@ -193,10 +218,64 @@ class BlackjackGame {
     }
 }
 
+const saldoElemento = document.getElementById("saldo");
+const montoInput = document.getElementById("monto");
+const mensaje = document.getElementById("mensaje");
+const btnPedir = document.getElementById("pedir");
+const btnPlantar = document.getElementById("plantar");
+const btnApostar = document.getElementById("btn-apostar");
+let saldoDisponible = obtenerSaldo();
+let apuestaActual = 0;
+let partidaEnCurso = false;
+
+function actualizarSaldo() {
+    saldoElemento.textContent = saldoDisponible;
+}
+//funcion para validar el monto
+function validarMonto() {
+    const apuesta = Number(montoInput.value);
+    const montoValido =
+        montoInput.value.trim() !== "" &&
+        Number.isFinite(apuesta) &&
+        apuesta > 0 &&
+        apuesta <= saldoDisponible;
+
+    if (!montoValido) {
+        mensaje.textContent =
+            "Ingresa una apuesta mayor que cero y que no supere el saldo";
+        btnPedir.disabled = true;
+        btnPlantar.disabled = true;
+        return;
+    }
+
+    apuestaActual = apuesta;
+    saldoDisponible -= apuestaActual;
+    guardarSaldo(saldoDisponible);
+    actualizarSaldo();
+
+    partidaEnCurso = true;
+    btnPedir.disabled = false;
+    btnPlantar.disabled = false;
+    btnApostar.disabled = true;
+    montoInput.disabled = true;
+    mensaje.textContent = "Apuesta aceptada. ¡Que comience el juego!";
+}
+
 //inicialización del juego al cargar la ventana
 window.onload = function(){
+    actualizarSaldo();
+
     let game = new BlackjackGame();
     game.start();
+
+    btnApostar.addEventListener("click", validarMonto);
+    montoInput.addEventListener("input", function() {
+        if (!partidaEnCurso) {
+            btnPedir.disabled = true;
+            btnPlantar.disabled = true;
+            mensaje.textContent = "";
+        }
+    });
 
     document.getElementById("reintentar").onclick = function(){
         document.getElementById("dealer-cards").innerHTML = "";
@@ -205,6 +284,14 @@ window.onload = function(){
         document.getElementById("dealer-sum").innerText = "";
         document.getElementById("player-sum").innerText = "";
         document.getElementById("resultadoss").innerText = "";
+
+        apuestaActual = 0;
+        partidaEnCurso = false;
+        montoInput.disabled = false;
+        btnApostar.disabled = false;
+        btnPedir.disabled = true;
+        btnPlantar.disabled = true;
+        mensaje.textContent = "";
 
         game = new BlackjackGame();
         game.start();
