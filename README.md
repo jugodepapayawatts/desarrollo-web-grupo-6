@@ -83,5 +83,5 @@ Vicente Gallardo.
 
 ## Consideraciones
 
-Actualmente, los formularios de registro e inicio de sesión corresponden solamente
-a una visualizacion, en otras palabras: no hacen nada.
+En las ultimas actualizaciones se agregaron 2 juegos(blackjack y ruleta)  en los cuales se puede apostar el saldo disponible del usuario ademas las estadisticas del usuario y su saldo son funcionales aunque solo por la sesion.
+
