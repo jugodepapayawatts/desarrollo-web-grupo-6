@@ -42,8 +42,8 @@ h2 {
     background: #fff;
 }
 
-#pedir,
-#plantar,
+#hit,
+#stay,
 #reintentar,
 #btn-apostar,
 #volver_inicio
@@ -62,8 +62,8 @@ h2 {
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-#pedir:hover,
-#plantar:hover,
+#hit:hover,
+#stay:hover,
 #reintentar:hover,
 #btn-apostar:hover,
 #volver_inicio:hover {

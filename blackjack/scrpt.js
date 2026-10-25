@@ -127,29 +127,29 @@ class BlackjackGame {
             this.#player.addCard(card);
             this.renderCard("player-cards", card);
         }
-        //Conexión con elementos y acciones HTML (pedir, plantar)
-        document.getElementById("pedir").onclick = () => this.pedir();
-        document.getElementById("plantar").onclick = () => this.plantar();
+        //Conexión con elementos y acciones HTML (hit, stay)
+        document.getElementById("hit").onclick = () => this.hit();
+        document.getElementById("stay").onclick = () => this.stay();
 
-        document.getElementById("pedir").disabled = true;
-        document.getElementById("plantar").disabled = true;
+        document.getElementById("hit").disabled = true;
+        document.getElementById("stay").disabled = true;
         document.getElementById("reintentar").style.display = "none";
         document.getElementById("player-sum").innerText = this.#player.getAdjustedScore();
     }
 
-    pedir(){
+    hit(){
         if(!this.#canHit || !partidaEnCurso) return;
 
         let card = this.#deck.popCard();
             this.#player.addCard(card);
             this.renderCard("player-cards", card);
+        document.getElementById("player-sum").innerText =
+            this.#player.getAdjustedScore();
+
         if (this.#player.getAdjustedScore() >= 21) {
             this.stay();
             return;
         }
-
-        document.getElementById("player-sum").innerText =
-            this.#player.getAdjustedScore();
     }
 
     verificar21(){
@@ -158,7 +158,7 @@ class BlackjackGame {
         }
     }
 
-    plantar(){
+    stay(){
         if(!this.#canHit || !partidaEnCurso) return;
 
         this.#canHit = false;
@@ -211,8 +211,8 @@ class BlackjackGame {
         document.getElementById("dealer-sum").innerText = dealerFinalScore;
         document.getElementById("player-sum").innerText = playerFinalScore;
         document.getElementById("resultadoss").innerText = message;
-        document.getElementById("pedir").disabled = true;
-        document.getElementById("plantar").disabled = true;
+        document.getElementById("hit").disabled = true;
+        document.getElementById("stay").disabled = true;
         btnApostar.disabled = true;
         montoInput.disabled = true;
         document.getElementById("reintentar").style.display = "inline-block";
@@ -229,8 +229,8 @@ class BlackjackGame {
 const saldoElemento = document.getElementById("saldo");
 const montoInput = document.getElementById("monto");
 const mensaje = document.getElementById("mensaje");
-const btnPedir = document.getElementById("pedir");
-const btnPlantar = document.getElementById("plantar");
+const btnHit = document.getElementById("hit");
+const btnStay = document.getElementById("stay");
 const btnApostar = document.getElementById("btn-apostar");
 let saldoDisponible = obtenerSaldo();
 let apuestaActual = 0;
@@ -251,8 +251,8 @@ function validarMonto(game) {
     if (!montoValido) {
         mensaje.textContent =
             "Ingresa una apuesta mayor que cero y que no supere el saldo";
-        btnPedir.disabled = true;
-        btnPlantar.disabled = true;
+        btnHit.disabled = true;
+        btnStay.disabled = true;
         return;
     }
 
@@ -262,8 +262,8 @@ function validarMonto(game) {
     actualizarSaldo();
 
     partidaEnCurso = true;
-    btnPedir.disabled = false;
-    btnPlantar.disabled = false;
+    btnHit.disabled = false;
+    btnStay.disabled = false;
     btnApostar.disabled = true;
     montoInput.disabled = true;
     mensaje.textContent = "Apuesta aceptada. ¡Que comience el juego!";
@@ -280,8 +280,8 @@ window.onload = function(){
     btnApostar.addEventListener("click", () => validarMonto(game));
     montoInput.addEventListener("input", function() {
         if (!partidaEnCurso) {
-            btnPedir.disabled = true;
-            btnPlantar.disabled = true;
+            btnHit.disabled = true;
+            btnStay.disabled = true;
             mensaje.textContent = "";
         }
     });
@@ -298,8 +298,8 @@ window.onload = function(){
         partidaEnCurso = false;
         montoInput.disabled = false;
         btnApostar.disabled = false;
-        btnPedir.disabled = true;
-        btnPlantar.disabled = true;
+        btnHit.disabled = true;
+        btnStay.disabled = true;
         mensaje.textContent = "";
 
         game = new BlackjackGame();
