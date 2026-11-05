@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Casino Nova | Tragamonedas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="../Saldo.js" defer></script>
+  <script src="tjava.js" defer></script>
+</head>
+<body>  
+  <button id="volver _inicio" onclick="window.location.href='../index.html'">Volver</button>
+
+  <main class="contenedor-tragamonedas">
+    <h1>Bienvenido a Tragamonedas</h1>
+
+    <div class="layout-juego">
+      <aside class="panel izquierda">
+        <h2>Resumen de símbolos</h2>
+
+        <ul class="symbols-list">
+          <li>
+            <span class="symbol-icon cherry">🍒</span>
+            <div>
+              <strong>Cherry</strong>
+              <small>Premio bajo</small>
+            </div>
+          </li>
+          <li>
+            <span class="symbol-icon bar">BAR</span>
+            <div>
+              <strong>Bar</strong>
+              <small>Premio medio</small>
+            </div>
+          </li>
+          <li>
+            <span class="symbol-icon seven">7</span>
+            <div>
+              <strong>Lucky 7</strong>
+              <small>Premio alto</small>
+            </div>
+          </li>
+          <li>
+            <span class="symbol-icon diamond">💎</span>
+            <div>
+              <strong>Diamante</strong>
+              <small>Premio especial</small>
+            </div>
+          </li>
+        </ul>
+      </aside>
+
+      <section class="maquina">
+        <div class="machine-header">
+          <span>CASINO NOVA</span>
+          <span>Jackpot: 2500</span>
+        </div>
+
+        <div class="machine-visual">
+          <div class="slot-window">
+            <div class="reel"><span>7</span></div>
+            <div class="reel"><span>🍒</span></div>
+            <div class="reel"><span>BAR</span></div>
+          </div>
+        </div>
+
+        <div class="machine-footer">
+          <div class="balance-box">
+            <span>Saldo</span>
+            <strong>120 €</strong>
+          </div>
+          <button class="spin-button">Girar</button>
+        </div>
+      </section>
+
+      <aside class="panel derecha">
+        <h2>Apuestas</h2>
+
+        <div class="bet-buttons">
+          <button class="bet-btn active">1 CLP</button>
+          <button class="bet-btn">2 CLP</button>
+          <button class="bet-btn">5 CLP</button>
+          <button class="bet-btn">10 CLP</button>
+        </div>
+
+        <div class="bet-summary">
+          <span>Última apuesta</span>
+          <strong>5 CLP</strong>
+        </div>
+
+        <button class="action-btn">Jugar</button>
+        <button class="action-btn secondary">Reiniciar</button>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
