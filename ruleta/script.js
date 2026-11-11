@@ -68,10 +68,7 @@ async function realizarApuesta() {
   const monto = Number(montoInput.value);
   const apuesta = tipoApuesta.value;
 
-  if (juego.value !== "ruleta") {
-    mensaje.textContent = "Selecciona un juego válido.";
-    return;
-  }
+  
 
   if (montoInput.value.trim() === "" || !Number.isFinite(monto) || monto <= 0) {
     mensaje.textContent = "Ingresa un monto numérico mayor que cero.";

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Casino Nova | Tragamonedas</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="../Saldo.js" defer></script>
   <script src="tjava.js" defer></script>
 </head>
 <body>  
@@ -22,28 +23,28 @@
             <span class="symbol-icon cherry">🍒</span>
             <div>
               <strong>Cherry</strong>
-              <small>Premio bajo</small>
+              <small>trio=2:1;par=0.5:1</small>
             </div>
           </li>
           <li>
             <span class="symbol-icon bar">BAR</span>
             <div>
               <strong>Bar</strong>
-              <small>Premio medio</small>
+              <small>trio=4:1;par=1:1</small>
             </div>
           </li>
           <li>
             <span class="symbol-icon seven">7</span>
             <div>
               <strong>Lucky 7</strong>
-              <small>Premio alto</small>
+              <small>trio=8:1;par=2:1</small>
             </div>
           </li>
           <li>
             <span class="symbol-icon diamond">💎</span>
             <div>
               <strong>Diamante</strong>
-              <small>Premio especial</small>
+              <small>trio=JACKPOT</small>
             </div>
           </li>
         </ul>
@@ -52,7 +53,7 @@
       <section class="maquina">
         <div class="machine-header">
           <span>CASINO NOVA</span>
-          <span>Jackpot: 2500</span>
+          <span id="jackpot">Jackpot: 2500 CLP</span>
         </div>
 
         <div class="machine-visual">
@@ -66,9 +67,8 @@
         <div class="machine-footer">
           <div class="balance-box">
             <span>Saldo</span>
-            <strong>120 €</strong>
+            <strong>120 CLP</strong>
           </div>
-          <button class="spin-button">Girar</button>
         </div>
       </section>
 
@@ -76,19 +76,18 @@
         <h2>Apuestas</h2>
 
         <div class="bet-buttons">
-          <button class="bet-btn active">1 €</button>
-          <button class="bet-btn">2 €</button>
-          <button class="bet-btn">5 €</button>
-          <button class="bet-btn">10 €</button>
+          <button class="bet-btn active">10 CLP</button>
+          <button class="bet-btn">20 CLP</button>
+          <button class="bet-btn">50 CLP</button>
+          <button class="bet-btn">100 CLP</button>
         </div>
 
         <div class="bet-summary">
           <span>Última apuesta</span>
-          <strong>5 €</strong>
+          <strong>Ninguna</strong>
         </div>
 
-        <button class="action-btn">Jugar</button>
-        <button class="action-btn secondary">Reiniciar</button>
+        <button class="action-btn">Girar</button>
       </aside>
     </div>
   </main>

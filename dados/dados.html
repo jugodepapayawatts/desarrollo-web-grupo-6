@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casino Nova | Dados</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="../Saldo.js" defer></script>
+  <script src="djava.js" defer></script>
+</head>
+<body>
+  <button id="volver_inicio" type="button" onclick="window.location.href='../index.html'">Volver</button>
+
+  <main class="contenedor-dados">
+    <header class="encabezado">
+      <p class="marca">CASINO NOVA</p>
+      <h1>Mesa de dados</h1>
+      <p class="saldo">Saldo disponible: <strong id="saldo">--</strong></p>
+    </header>
+
+    <section class="mesa" aria-label="Mesa de apuestas de dados">
+      <section class="panel-apuesta dobles" aria-labelledby="titulo-dobles">
+        <h2 id="titulo-dobles">DOBLES</h2>
+        <h3>Ganancias de 8:1</h3>
+        <p class="descripcion">Elige la pareja que saldrá en los dados.</p>
+        <div class="opciones-dobles">
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="dobles" data-valor="1">Doble de 1 <span class="dados-dobles"><img src="caras/dado1.png" alt="Dado 1"><img src="caras/dado1.png" alt="Dado 1"></span></button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="dobles" data-valor="2">Doble de 2 <span class="dados-dobles"><img src="caras/dado2.png" alt="Dado 2"><img src="caras/dado2.png" alt="Dado 2"></span></button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="dobles" data-valor="3">Doble de 3 <span class="dados-dobles"><img src="caras/dado3.png" alt="Dado 3"><img src="caras/dado3.png" alt="Dado 3"></span></button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="dobles" data-valor="4">Doble de 4 <span class="dados-dobles"><img src="caras/dado4.png" alt="Dado 4"><img src="caras/dado4.png" alt="Dado 4"></span></button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="dobles" data-valor="5">Doble de 5 <span class="dados-dobles"><img src="caras/dado5.png" alt="Dado 5"><img src="caras/dado5.png" alt="Dado 5"></span></button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="dobles" data-valor="6">Doble de 6 <span class="dados-dobles"><img src="caras/dado6.png" alt="Dado 6"><img src="caras/dado6.png" alt="Dado 6"></span></button>
+        </div>
+      </section>
+
+      <section class="zona-dados" aria-label="Resultado de los dados">
+        <p class="rotulo-dados">LANZAMIENTO</p>
+        <div class="dados">
+          <img id="dado-1" data-valor="1" src="caras/dado1.png" alt="Primer dado: 1">
+          <img id="dado-2" data-valor="1" src="caras/dado1.png" alt="Segundo dado: 1">
+        </div>
+        <p id="resultado-dados" class="resultado-dados" aria-live="polite">Esperando el lanzamiento</p>
+      </section>
+
+      <section class="panel-apuesta exacto" aria-labelledby="titulo-exacto">
+        <h2 id="titulo-exacto">SUMA EXACTA</h2>
+        <h3>Ganancias de 6:1</h3>
+        <p class="descripcion">Adivina la suma de los dos dados.</p>
+        <div class="opciones-exacto">
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="2">2</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="3">3</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="4">4</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="5">5</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="6">6</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="7">7</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="8">8</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="9">9</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="10">10</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="11">11</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="suma" data-valor="12">12</button>
+        </div>
+      </section>
+
+      <section class="panel-apuesta paridad" aria-labelledby="titulo-paridad">
+        <h2 id="titulo-paridad">PAR / IMPAR</h2>
+        <h3>Ganancias de 2:1</h3>
+        <div class="opciones-paridad">
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="paridad" data-valor="par">PAR</button>
+          <button type="button" class="boton-apuesta" data-tipo-apuesta="paridad" data-valor="impar">IMPAR</button>
+        </div>
+        <div class="control-monto">
+          <label for="monto-apuesta">Monto de la apuesta</label>
+          <input id="monto-apuesta" name="monto-apuesta" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej.: 1000">
+        </div>
+          <button id="btn-lanzar" class="boton-lanzar" type="button">Confirmar apuesta y tirar</button>
+        </section>
+    </section>
+
+    <p id="mensaje" class="mensaje" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>
