@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Crear cuenta - Casino Nova</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+    <h1>Crear una cuenta</h1>
+
+  <form id="formulario_cuenta">
+
+
+       <label for="nombre">Nombre:</label>
+       <input type="text" id="nombre" name="nombre"
+       pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]+"
+       title="Solo se permiten letras"
+       required>
+       <br><br>
+
+       <label for="apellido">Apellido:</label>
+       <input type="text" id="apellido" name="apellido"
+       pattern="[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]+"
+       title="Solo se permiten letras"
+       required>
+       <br><br>
+
+
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo"
+      name="correo" required>
+      <br><br>
+
+      <label for="usuario">Nombre de usuario:</label>
+      <input type="text" id="usuario"
+      name="usuario" minlength="3" maxlength="20" required>
+      <br><br>
+
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" id="contrasena"
+      name="contrasena" minlength="8" required>
+      <br><br>
+
+      <label for="fecha">Fecha de nacimiento:</label>
+      <input type="date" id="fecha"
+      name="fecha" required>
+      <br><br>
+
+      <label for="genero">Género</label>
+      <select id="genero" name="genero" required>
+
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+          <option value="prefiero no decirlo">Prefiero no decirlo</option>
+
+      </select>
+
+      <br><br>
+
+      <input type="checkbox" id="terminos" name="terminos" required>
+      <label for="terminos">Acepto los términos y condiciones</label>
+
+      <br><br>
+
+      <input type="submit" value="Crear cuenta">
+      <br><br>
+
+      <p id="aviso_cuenta"></p>
+
+      <a class="boton" href="index.html">Volver al inicio</a>
+  </form>
+
+    <script>
+        document.getElementById("formulario_cuenta").addEventListener("submit", function(evento) {
+
+            evento.preventDefault();
+
+            const usuario = document.getElementById("usuario").value.trim();
+
+            sessionStorage.setItem("usuarioCasino", usuario);
+
+            document.getElementById("aviso_cuenta").textContent =
+                "Datos de demostración registrados. Tu usuario es: " + usuario;
+
+        });
+    </script>
+
+    </body>
+</html>
