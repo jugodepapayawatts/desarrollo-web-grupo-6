@@ -1,3 +1,4 @@
+
 const saldoElemento = document.getElementById("saldo");
 const juego = document.getElementById("juego");
 const tipoApuesta = document.getElementById("tipo-apuesta");
@@ -8,15 +9,13 @@ const numeroGanador = document.getElementById("numero-ganador");
 const detalleResultado = document.getElementById("detalle-resultado");
 const historial = document.getElementById("historial");
 
-let saldo = obtenerSaldo();
+let saldo = 0;
 let rondas = [];
 
 const rojos = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
 
-actualizarSaldo();
-
 function formatoDinero(cantidad) {
-  return "$" + cantidad.toLocaleString("es-CL");
+  return cantidad.toLocaleString("es-CL") + " créditos";
 }
 
 function obtenerColor(numero) {
@@ -49,6 +48,43 @@ function actualizarSaldo() {
   saldoElemento.textContent = formatoDinero(saldo);
 }
 
+// Obtener saldo desde MongoDB
+async function cargarSaldo() {
+  const token = sessionStorage.getItem("casinoToken");
+
+  if (!token) {
+    window.location.href = "../Inicio_sesion.html";
+    return false;
+  }
+
+  try {
+    const respuesta = await fetch("/api/perfil", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!respuesta.ok) {
+      if (respuesta.status === 401) {
+        window.location.href = "../Inicio_sesion.html";
+      } else {
+        mensaje.textContent = "No se pudo cargar el saldo.";
+      }
+      return false;
+    }
+
+    const datos = await respuesta.json();
+    saldo = datos.usuario.saldo;
+    actualizarSaldo();
+    return true;
+
+  } catch (error) {
+    mensaje.textContent = "No se pudo conectar con el servidor.";
+    console.error(error);
+    return false;
+  }
+}
+
 function mostrarHistorial() {
   historial.innerHTML = "";
 
@@ -59,25 +95,21 @@ function mostrarHistorial() {
 
   rondas.forEach(function(ronda) {
     const elemento = document.createElement("li");
-    elemento.textContent = `Número ${ronda.numero} (${ronda.color}): ${ronda.resultado}`;
+    elemento.textContent =
+      `Número ${ronda.numero} (${ronda.color}): ${ronda.resultado}`;
     historial.appendChild(elemento);
   });
 }
 
+// Realizar apuesta mediante el servidor
 async function realizarApuesta() {
   const monto = Number(montoInput.value);
   const apuesta = tipoApuesta.value;
 
-  
-
-  if (montoInput.value.trim() === "" || !Number.isFinite(monto) || monto <= 0) {
-    mensaje.textContent = "Ingresa un monto numérico mayor que cero.";
-    montoInput.focus();
-    return;
-  }
-
-  if (monto > saldo) {
-    mensaje.textContent = "La apuesta no puede superar tu saldo disponible.";
+  if (montoInput.value.trim() === "" ||
+      !Number.isSafeInteger(monto) ||
+      monto <= 0 || monto > 1000) {
+    mensaje.textContent = "Ingresa una apuesta entre 1 y 1000 créditos.";
     montoInput.focus();
     return;
   }
@@ -86,44 +118,47 @@ async function realizarApuesta() {
   mensaje.textContent = "Cargando resultados...";
 
   try {
-    // Se solicitan los números disponibles
-    const respuesta = await fetch("resultados.json", { cache: "no-store" });
+    const token = sessionStorage.getItem("casinoToken");
 
-    if (!respuesta.ok) {
-      throw new Error("No se pudo obtener el archivo de resultados.");
-    }
-
-    const numeros = await respuesta.json();
-
-    // Estado de respuesta vacía por si no hay números
-    if (!Array.isArray(numeros) || numeros.length === 0) {
-      mensaje.textContent = "No hay resultados disponibles. Intenta más tarde.";
-      numeroGanador.textContent = "Sin resultados";
-      detalleResultado.textContent = "";
+    if (!token) {
+      window.location.href = "../Inicio_sesion.html";
       return;
     }
 
-    const numero = numeros[Math.floor(Math.random() * numeros.length)];
+    const respuesta = await fetch("/api/ruleta/jugar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        apuesta: apuesta,
+        monto: monto,
+        solicitudId: crypto.randomUUID()
+      })
+    });
 
-    if (!Number.isInteger(numero) || numero < 0 || numero > 36) {
-      throw new Error("Los datos recibidos no son válidos.");
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      mensaje.textContent = datos.error || "Error al jugar.";
+      await cargarSaldo();
+      return;
     }
 
-    const color = obtenerColor(numero);
-    const gano = ganoApuesta(numero, apuesta);
+    const numero = datos.numero;
+    const color = datos.color;
+    const gano = datos.gano;
 
-    saldo -= monto;
+    saldo = datos.saldo;
 
     if (gano) {
-      saldo += monto * 2;
-       guardarSaldo(saldo);//poner cuando se altera el saldo
-      detalleResultado.textContent = `¡Ganaste! Recibes ${formatoDinero(monto * 2)}.`;
+      detalleResultado.textContent =
+        `¡Ganaste! Recibes ${formatoDinero(datos.premio)}.`;
     } else {
-      detalleResultado.textContent = `Perdiste ${formatoDinero(monto)}.`;
-       guardarSaldo(saldo);
+      detalleResultado.textContent =
+        `Perdiste ${formatoDinero(monto)}.`;
     }
-    registrarPartida("Ruleta", gano ? "ganada" : "perdida");//poner al final de todo juego para contar los juegos totales
-   
 
     numeroGanador.textContent = `Número ${numero} - ${color}`;
     mensaje.textContent = gano ? "Apuesta ganadora." : "Apuesta perdida.";
@@ -139,13 +174,18 @@ async function realizarApuesta() {
     montoInput.value = "";
 
   } catch (error) {
-    // Estado de error por si no hay conexión o falla la solicitud
-    mensaje.textContent = "Error al cargar los resultados. Revisa tu conexión e intenta nuevamente.";
-    numeroGanador.textContent = "No se pudo obtener el resultado";
-    detalleResultado.textContent = "";
+    mensaje.textContent =
+      "No se pudo confirmar el resultado. Revisa tu saldo e historial antes de volver a jugar.";
+    console.error(error);
+    await cargarSaldo();
+
   } finally {
     botonGirar.disabled = false;
   }
 }
 
+actualizarSaldo();
+mostrarHistorial();
+
+window.addEventListener("pageshow", cargarSaldo);
 botonGirar.addEventListener("click", realizarApuesta);
