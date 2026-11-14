@@ -1,3 +1,4 @@
+
 ( function () {
   const simbolos = [
     { valor: "🍒", nombre: "Cherry", multiplicador: 2, multiplicadorPar: 0.5 },
@@ -6,7 +7,6 @@
     { valor: "💎", nombre: "Diamante", multiplicador: 0, multiplicadorPar: 0 }
   ];
   const jackpotBase = 2500;
-  const claveJackpot = "tragamonedasJackpot";
   const apuestaInicial = 10;
   const carretes = Array.from(document.querySelectorAll(".reel span"));
   const botonesApuesta = Array.from(document.querySelectorAll(".bet-btn"));
@@ -25,22 +25,15 @@
     botonesGirar.length === 0 ||
     !saldoElemento ||
     !ultimaApuestaElemento ||
-    !jackpotElemento ||
-    typeof obtenerSaldo !== "function" ||
-    typeof guardarSaldo !== "function" ||
-    typeof registrarPartida !== "function") {
+    !jackpotElemento) {
     throw new Error("No se pudo inicializar el juego de tragamonedas.");
   }
 
-  let saldo = obtenerSaldo();
-  const jackpotGuardado = sessionStorage.getItem(claveJackpot);
-  let jackpot = jackpotGuardado === null ? jackpotBase : Number(jackpotGuardado);
+  let saldo = 0;
+  let jackpot = jackpotBase;
   let apuestaSeleccionada = apuestaInicial;
   let girando = false;
-
-  if (!Number.isFinite(jackpot) || jackpot < jackpotBase) {
-    throw new Error("El valor guardado del jackpot no es válido.");
-  }
+  let saldoCargado = false;
 
   mensaje.setAttribute("role", "status");
   mensaje.setAttribute("aria-live", "polite");
@@ -60,11 +53,11 @@
     botonesApuesta.forEach(function (boton) {
       const monto = Number.parseInt(boton.textContent, 10);
       boton.classList.toggle("active", monto === apuestaSeleccionada);
-      boton.disabled = girando;
+      boton.disabled = girando || !saldoCargado;
     });
 
     botonesGirar.forEach(function (boton) {
-      boton.disabled = girando;
+      boton.disabled = girando || !saldoCargado;
     });
   }
 
@@ -72,8 +65,43 @@
     return simbolos[Math.floor(Math.random() * simbolos.length)];
   }
 
+  // Obtener el saldo y el jackpot desde MongoDB
+  async function cargarSaldo() {
+    const token = sessionStorage.getItem("casinoToken");
+
+    if (!token) {
+      window.location.href = "../Inicio_sesion.html";
+      return;
+    }
+
+    try {
+      const respuesta = await fetch("/api/tragamonedas/estado", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      if (!respuesta.ok) {
+        if (respuesta.status === 401) {
+          window.location.href = "../Inicio_sesion.html";
+        } else {
+          mensaje.textContent = "No se pudo cargar el saldo.";
+        }
+        return;
+      }
+
+      const datos = await respuesta.json();
+      saldo = datos.saldo;
+      jackpot = datos.jackpot;
+      saldoCargado = true;
+      actualizarInterfaz();
+
+    } catch (error) {
+      mensaje.textContent = "No se pudo conectar con el servidor.";
+      console.error(error);
+    }
+  }
+
   function realizarGiro() {
-    if (girando) return;
+    if (girando || !saldoCargado) return;
 
     if (apuestaSeleccionada > saldo) {
       mensaje.textContent = "No tienes saldo suficiente para esa apuesta.";
@@ -91,58 +119,68 @@
       });
     }, 90);
 
-    window.setTimeout(function () {
+    window.setTimeout(async function () {
       window.clearInterval(animacion);
 
-      const resultado = carretes.map(function () {
-        return simboloAleatorio();
-      });
-      resultado.forEach(function (simbolo, indice) {
-        carretes[indice].textContent = simbolo.valor;
-      });
-
-      saldo -= apuestaSeleccionada;
-      const gano = resultado.every(function (simbolo) {
-        return simbolo.valor === resultado[0].valor;
-      });
-      const simboloPar = resultado.find(function (simbolo, indice) {
-        return resultado.some(function (otro, otroIndice) {
-          return indice !== otroIndice && simbolo.valor === otro.valor;
-        });
-      });
-      const ganoPar = !gano &&
-        Boolean(simboloPar) &&
-        simboloPar.multiplicadorPar > 0;
-
-      if (gano) {
-        const esJackpot = resultado[0].valor === "💎";
-        const premio = esJackpot
-          ? jackpot
-          : apuestaSeleccionada * resultado[0].multiplicador;
-        saldo += premio;
-        mensaje.textContent = esJackpot
-          ? `¡Jackpot! Ganaste ${formatoDinero(premio)} con tres diamantes.`
-          : `¡Ganaste ${formatoDinero(premio)}! Tres ${resultado[0].nombre} iguales.`;
-        if (esJackpot) {
-          jackpot = jackpotBase;
+      try {
+        const token = sessionStorage.getItem("casinoToken");
+        if (!token) {
+          window.location.href = "../Inicio_sesion.html";
+          return;
         }
-      } else if (ganoPar) {
-        const premio = apuestaSeleccionada * simboloPar.multiplicadorPar;
-        saldo += premio;
-        mensaje.textContent = `¡Ganaste ${formatoDinero(premio)} con dos ${simboloPar.nombre} iguales!`;
-      } else {
-        jackpot += apuestaSeleccionada;
-        mensaje.textContent = `No tuviste una línea ganadora. Perdiste ${formatoDinero(apuestaSeleccionada)}.`;
-      }
 
-      guardarSaldo(saldo);
-      sessionStorage.setItem(claveJackpot, String(jackpot));
-      registrarPartida("Tragamonedas", gano || ganoPar ? "ganada" : "perdida");
-      girando = false;
-      actualizarInterfaz();
+        const respuesta = await fetch("/api/tragamonedas/jugar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            monto: apuestaSeleccionada,
+            solicitudId: crypto.randomUUID()
+          })
+        });
+
+        const datos = await respuesta.json();
+        if (!respuesta.ok) {
+          mensaje.textContent = datos.error || "No se pudo realizar el giro.";
+          await cargarSaldo();
+          return;
+        }
+
+        datos.simbolos.forEach(function (simbolo, indice) {
+          carretes[indice].textContent = simbolo;
+        });
+
+        saldo = datos.saldo;
+        jackpot = datos.jackpot;
+
+        if (datos.esJackpot) {
+          mensaje.textContent =
+            `¡Jackpot! Ganaste ${formatoDinero(datos.premio)} con tres diamantes.`;
+        } else if (datos.gano) {
+          mensaje.textContent =
+            `¡Ganaste ${formatoDinero(datos.premio)}! Tres ${datos.nombrePremio} iguales.`;
+        } else if (datos.ganoPar) {
+          mensaje.textContent =
+            `¡Ganaste ${formatoDinero(datos.premio)} con dos ${datos.nombrePremio} iguales!`;
+        } else {
+          mensaje.textContent =
+            `No tuviste una línea ganadora. Perdiste ${formatoDinero(apuestaSeleccionada)}.`;
+        }
+
+      } catch (error) {
+        mensaje.textContent = "No se pudo confirmar el giro. Revisa tu saldo.";
+        console.error(error);
+        await cargarSaldo();
+
+      } finally {
+        girando = false;
+        actualizarInterfaz();
+      }
     }, 800);
   }
-   
+
   botonesApuesta.forEach(function (boton) {
     boton.addEventListener("click", function () {
       const monto = Number.parseInt(boton.textContent, 10);
@@ -166,4 +204,5 @@
 
   actualizarInterfaz();
   mensaje.textContent = "Elige una apuesta y pulsa Girar.";
+  window.addEventListener("pageshow", cargarSaldo);
 })();

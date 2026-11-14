@@ -440,6 +440,136 @@ app.post("/api/ruleta/jugar", async (req, res) => {
   }
 });
 
+
+ // Juego Tragamonedas
+app.get("/api/tragamonedas/estado", async (req, res) => {
+  let datos;
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    datos = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({ error: "Inicia sesión" });
+  }
+
+  try {
+    const usuario = await Usuario.findById(datos.sub);
+    if (!usuario) return res.status(401).json({ error: "Cuenta no encontrada" });
+
+    const ultima = await Partida.findOne({
+      usuario: usuario._id, juego: "Tragamonedas"
+    }).sort({ createdAt: -1, _id: -1 });
+
+    res.json({
+      saldo: usuario.saldo,
+      jackpot: ultima?.detalle?.jackpot ?? 2500
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "No se pudo consultar el estado" });
+  }
+});
+
+app.post("/api/tragamonedas/jugar", async (req, res) => {
+  let datos;
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    datos = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({ error: "Inicia sesión" });
+  }
+
+  const { monto, solicitudId } = req.body || {};
+  if (![10, 20, 50, 100].includes(monto) ||
+      typeof solicitudId !== "string" ||
+      !/^[0-9a-f-]{36}$/i.test(solicitudId)) {
+    return res.status(400).json({ error: "Apuesta inválida" });
+  }
+
+  const session = await mongoose.startSession();
+  try {
+    let respuesta;
+
+    await session.withTransaction(async () => {
+      const repetida = await Partida.findOne({ solicitudId }).session(session);
+      if (repetida) throw new Error("Partida duplicada");
+
+      const usuario = await Usuario.findById(datos.sub).session(session);
+      if (!usuario) throw new Error("Usuario no encontrado");
+      if (usuario.saldo < monto) throw new Error("Saldo insuficiente");
+
+      const ultima = await Partida.findOne({
+        usuario: usuario._id, juego: "Tragamonedas"
+      }).sort({ createdAt: -1, _id: -1 }).session(session);
+      let jackpot = ultima?.detalle?.jackpot ?? 2500;
+
+      const simbolos = [
+        { valor: "🍒", nombre: "Cherry", multiplicador: 2, multiplicadorPar: 0.5 },
+        { valor: "BAR", nombre: "BAR", multiplicador: 4, multiplicadorPar: 1.5 },
+        { valor: "7", nombre: "Lucky 7", multiplicador: 8, multiplicadorPar: 2 },
+        { valor: "💎", nombre: "Diamante", multiplicador: 0, multiplicadorPar: 0 }
+      ];
+      const giro = Array.from({ length: 3 }, () =>
+        simbolos[randomInt(0, simbolos.length)]
+      );
+      const gano = giro.every(s => s.valor === giro[0].valor);
+      const simboloPar = giro.find((s, i) =>
+        giro.some((otro, j) => i !== j && s.valor === otro.valor)
+      );
+      const ganoPar = !gano && !!simboloPar && simboloPar.multiplicadorPar > 0;
+      const esJackpot = gano && giro[0].valor === "💎";
+
+      let premio = 0;
+      if (gano) {
+        premio = esJackpot ? jackpot : monto * giro[0].multiplicador;
+        if (esJackpot) jackpot = 2500;
+      } else if (ganoPar) {
+        premio = monto * simboloPar.multiplicadorPar;
+      } else {
+        jackpot += monto;
+      }
+
+      const saldoAnterior = usuario.saldo;
+      const saldoPosterior = saldoAnterior - monto + premio;
+      usuario.saldo = saldoPosterior;
+      await usuario.save({ session });
+
+      await Partida.create([{
+        usuario: usuario._id,
+        juego: "Tragamonedas",
+        apuesta: monto,
+        premio,
+        resultado: gano || ganoPar ? "ganada" : "perdida",
+        detalle: {
+          simbolos: giro.map(s => s.valor), esJackpot, jackpot
+        },
+        saldoAnterior,
+        saldoPosterior,
+        solicitudId
+      }], { session });
+
+      respuesta = {
+        simbolos: giro.map(s => s.valor),
+        gano, ganoPar, esJackpot, premio,
+        nombrePremio: gano ? giro[0].nombre : simboloPar?.nombre,
+        saldo: saldoPosterior, jackpot
+      };
+    });
+
+    res.json(respuesta);
+  } catch (error) {
+    console.error(error);
+    if (error.code === 11000 || error.message === "Partida duplicada") {
+      return res.status(409).json({ error: "Esta partida ya fue registrada" });
+    }
+    res.status(error.message === "Saldo insuficiente" ? 400 : 500).json({
+      error: error.message === "Saldo insuficiente"
+        ? "Saldo insuficiente" : "No se pudo registrar la partida"
+    });
+  } finally {
+    await session.endSession();
+  }
+});
+
 // Estadísticas de las partidas guardadas
 app.get("/api/estadisticas", async (req, res) => {
   let datos;
