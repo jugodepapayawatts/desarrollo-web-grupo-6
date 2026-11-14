@@ -36,7 +36,7 @@ function puntosCartaVisibleDealer(cartas) {
     if (!cartaVisible) return "—";
 
     const numero = cartaVisible.split("-")[0];
-    const valor = numero === "A" ? "1 u 11" :
+    const valor = numero === "A" ? "1 o 11" :
         ["J", "Q", "K"].includes(numero) ? 10 : Number(numero);
 
     return `${valor}`;
