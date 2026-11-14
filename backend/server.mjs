@@ -570,6 +570,155 @@ app.post("/api/tragamonedas/jugar", async (req, res) => {
   }
 });
 
+
+// Juego Blackjack (créditos virtuales)
+app.post("/api/blackjack/jugar", async (req, res) => {
+  let datos;
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    datos = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({ error: "Inicia sesión" });
+  }
+
+  const { accion, monto, solicitudId, paso } = req.body || {};
+  if (!["iniciar", "pedir", "plantarse", "estado"].includes(accion) ||
+      typeof solicitudId !== "string" ||
+      !/^[0-9a-f-]{36}$/i.test(solicitudId) ||
+      (accion === "iniciar" &&
+        (!Number.isSafeInteger(monto) || monto < 1 || monto > 1000)) ||
+      (["pedir", "plantarse"].includes(accion) &&
+        (!Number.isSafeInteger(paso) || paso < 1))) {
+    return res.status(400).json({ error: "Solicitud inválida" });
+  }
+
+  const valor = (carta) => {
+    const numero = carta.split("-")[0];
+    return numero === "A" ? 11 : ["J", "Q", "K"].includes(numero)
+      ? 10 : Number(numero);
+  };
+  const puntaje = (cartas) => {
+    let total = cartas.reduce((suma, carta) => suma + valor(carta), 0);
+    let ases = cartas.filter(carta => carta.startsWith("A-")).length;
+    while (total > 21 && ases > 0) { total -= 10; ases--; }
+    return total;
+  };
+  const mostrar = (partida, saldo) => {
+    const d = partida.detalle;
+    const finalizada = partida.resultado !== "en_curso";
+    return {
+      cartasJugador: d.jugador,
+      cartasDealer: finalizada ? d.dealer : ["BACK", d.dealer[1]],
+      puntosJugador: puntaje(d.jugador),
+      puntosDealer: finalizada ? puntaje(d.dealer) : null,
+      finalizada,
+      resultado: finalizada ? partida.resultado : null,
+      premio: finalizada ? partida.premio : 0,
+      saldo,
+      paso: d.paso
+    };
+  };
+
+  const session = await mongoose.startSession();
+  try {
+    let respuesta;
+    await session.withTransaction(async () => {
+      const usuario = await Usuario.findById(datos.sub).session(session);
+      if (!usuario) throw new Error("Usuario no encontrado");
+      let partida = await Partida.findOne({ solicitudId }).session(session);
+
+      if (accion === "iniciar") {
+        if (partida) throw new Error("Partida duplicada");
+        if (usuario.saldo < monto) throw new Error("Saldo insuficiente");
+
+        const mazo = [];
+        for (const pinta of ["C", "D", "H", "S"]) {
+          for (const numero of ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]) {
+            mazo.push(`${numero}-${pinta}`);
+          }
+        }
+        for (let i = mazo.length - 1; i > 0; i--) {
+          const j = randomInt(i + 1);
+          [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
+        }
+        const dealer = [mazo.pop(), mazo.pop()];
+        const jugador = [mazo.pop(), mazo.pop()];
+        const saldoAnterior = usuario.saldo;
+        usuario.saldo -= monto;
+        await usuario.save({ session });
+
+        [partida] = await Partida.create([{
+          usuario: usuario._id,
+          juego: "Blackjack",
+          apuesta: monto,
+          premio: 0,
+          resultado: "en_curso",
+          detalle: { mazo, dealer, jugador, paso: 0 },
+          saldoAnterior,
+          saldoPosterior: usuario.saldo,
+          solicitudId
+        }], { session });
+      } else {
+        if (!partida || String(partida.usuario) !== String(usuario._id)) {
+          throw new Error("Partida no encontrada");
+        }
+        if (accion === "estado") {
+          respuesta = mostrar(partida, usuario.saldo);
+          return;
+        }
+        if (partida.resultado !== "en_curso") {
+          throw new Error("La partida ya terminó");
+        }
+        if (paso !== partida.detalle.paso + 1) {
+          throw new Error("Acción repetida o fuera de orden");
+        }
+      }
+
+      const d = partida.detalle;
+      let terminar = accion === "plantarse" || puntaje(d.jugador) >= 21;
+      if (accion === "pedir" && !terminar) {
+        d.jugador.push(d.mazo.pop());
+        terminar = puntaje(d.jugador) >= 21;
+      }
+
+      if (terminar) {
+        // Se mantiene la regla original: el dealer pide hasta llegar a 17.
+        while (puntaje(d.jugador) <= 21 && puntaje(d.dealer) < 17) {
+          d.dealer.push(d.mazo.pop());
+        }
+        const jugador = puntaje(d.jugador);
+        const dealer = puntaje(d.dealer);
+        partida.resultado = jugador > 21 ? "perdida" :
+          dealer > 21 || jugador > dealer ? "ganada" :
+          jugador === dealer ? "empate" : "perdida";
+        partida.premio = partida.resultado === "ganada"
+          ? partida.apuesta * 2 : partida.resultado === "empate"
+          ? partida.apuesta : 0;
+        usuario.saldo += partida.premio;
+        await usuario.save({ session });
+      }
+      if (accion !== "iniciar") d.paso++;
+      partida.markModified("detalle");
+      partida.saldoPosterior = usuario.saldo;
+      await partida.save({ session });
+      respuesta = mostrar(partida, usuario.saldo);
+    });
+    res.json(respuesta);
+  } catch (error) {
+    console.error(error);
+    const mensaje = error.message;
+    const codigo = mensaje === "Saldo insuficiente" ? 400 :
+      ["Partida duplicada", "La partida ya terminó", "Acción repetida o fuera de orden"].includes(mensaje) ||
+      error.code === 11000 ? 409 :
+      mensaje === "Partida no encontrada" ? 404 : 500;
+    res.status(codigo).json({
+      error: codigo === 500 ? "No se pudo procesar la partida" : mensaje
+    });
+  } finally {
+    await session.endSession();
+  }
+});
+
 // Estadísticas de las partidas guardadas
 app.get("/api/estadisticas", async (req, res) => {
   let datos;
