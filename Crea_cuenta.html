@@ -72,20 +72,50 @@
       <a class="boton" href="index.html">Volver al inicio</a>
   </form>
 
-    <script>
-        document.getElementById("formulario_cuenta").addEventListener("submit", function(evento) {
 
-            evento.preventDefault();
+<script>
+    document.getElementById("formulario_cuenta").addEventListener("submit", async function(evento) {
 
-            const usuario = document.getElementById("usuario").value.trim();
+        evento.preventDefault();
 
-            sessionStorage.setItem("usuarioCasino", usuario);
+        const aviso = document.getElementById("aviso_cuenta");
+        aviso.textContent = "Creando cuenta...";
 
-            document.getElementById("aviso_cuenta").textContent =
-                "Datos de demostración registrados. Tu usuario es: " + usuario;
+        const datos = {
+            nombre: document.getElementById("nombre").value.trim(),
+            apellido: document.getElementById("apellido").value.trim(),
+            correo: document.getElementById("correo").value.trim(),
+            usuario: document.getElementById("usuario").value.trim(),
+            contrasena: document.getElementById("contrasena").value
+        };
 
-        });
-    </script>
+        try {
+            const respuesta = await fetch("/api/registro", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await respuesta.json();
+
+            if (!respuesta.ok) {
+                aviso.textContent = resultado.error || "Error al crear cuenta";
+                return;
+            }
+
+            aviso.textContent = "Cuenta creada correctamente. Ya puedes iniciar sesión.";
+            document.getElementById("formulario_cuenta").reset();
+
+        } catch (error) {
+            aviso.textContent = "No se pudo conectar con el servidor.";
+            console.error(error);
+        }
+
+    });
+</script>
+
 
     </body>
 </html>

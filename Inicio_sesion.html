@@ -36,20 +36,49 @@
     </form>
 
     <script>
-        document.getElementById("formulario_login").addEventListener("submit", function(evento) {
+        document.getElementById("formulario_login").addEventListener("submit", async function(evento) {
 
             evento.preventDefault();
 
             const usuario = document.getElementById("usuario_login").value.trim();
+            const contrasena = document.getElementById("clave_login").value;
+            const aviso = document.getElementById("aviso_login");
 
-            if (usuario === "") {
-                document.getElementById("aviso_login").textContent = "Ingresa tu nombre de usuario.";
+            if (usuario === "" || contrasena === "") {
+                aviso.textContent = "Ingresa tu usuario y contraseña.";
                 return;
             }
 
-            sessionStorage.setItem("usuarioCasino", usuario);
+            aviso.textContent = "Iniciando sesión...";
 
-            window.location.href = "Perfil.html";
+            try {
+                const respuesta = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        usuario: usuario,
+                        contrasena: contrasena
+                    })
+                });
+
+                const resultado = await respuesta.json();
+
+                if (!respuesta.ok) {
+                    aviso.textContent = resultado.error || "Error al iniciar sesión.";
+                    return;
+                }
+
+                sessionStorage.setItem("casinoToken", resultado.token);
+                sessionStorage.setItem("usuarioCasino", resultado.usuario.usuario);
+
+                window.location.href = "Perfil.html";
+
+            } catch (error) {
+                aviso.textContent = "No se pudo conectar con el servidor.";
+                console.error(error);
+            }
 
         });
     </script>
