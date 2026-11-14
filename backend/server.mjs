@@ -171,7 +171,7 @@ app.get("/api/perfil", async (req, res) => {
   }
 });
 
-
+// Juego Dados
 app.post("/api/dados/jugar", async (req, res) => {
   let datos;
 
@@ -303,7 +303,7 @@ app.post("/api/dados/jugar", async (req, res) => {
   }
 });
 
-
+// Juego Ruleta
 app.post("/api/ruleta/jugar", async (req, res) => {
   let datos;
 
@@ -440,6 +440,56 @@ app.post("/api/ruleta/jugar", async (req, res) => {
   }
 });
 
+// Estadísticas de las partidas guardadas
+app.get("/api/estadisticas", async (req, res) => {
+  let datos;
+
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        error: "Debes iniciar sesión"
+      });
+    }
+
+    datos = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({
+      error: "Sesión inválida o vencida"
+    });
+  }
+
+  try {
+    const partidas = await Partida.find({
+      usuario: datos.sub
+    }).sort({ createdAt: -1 }).lean();
+
+    const ganadas = partidas.filter(
+      partida => partida.resultado === "ganada"
+    ).length;
+
+    const perdidas = partidas.filter(
+      partida => partida.resultado === "perdida"
+    ).length;
+
+    res.json({
+      ultimaActividad: partidas.length > 0
+        ? partidas[0].juego
+        : "Ninguna",
+      partidasJugadas: partidas.length,
+      partidasGanadas: ganadas,
+      partidasPerdidas: perdidas
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error al consultar estadísticas"
+    });
+  }
+});
+
 // Proteger los archivos del backend
 app.use("/backend", (req, res) => {
   res.status(404).json({ error: "No encontrado" });
@@ -452,6 +502,7 @@ app.use(express.static(frontend, {
 
 // Conectar a la base de datos
 await mongoose.connect(process.env.MONGODB_URI);
+await Partida.init();
 
 const PORT = process.env.PORT || 3000;
 
