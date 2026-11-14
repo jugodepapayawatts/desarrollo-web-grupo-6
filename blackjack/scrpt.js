@@ -30,6 +30,18 @@ function mostrarCartas(id, cartas) {
     });
 }
 
+// Muestra solamente el valor de la carta del dealer que está boca arriba.
+function puntosCartaVisibleDealer(cartas) {
+    const cartaVisible = cartas.find(carta => carta !== "BACK");
+    if (!cartaVisible) return "—";
+
+    const numero = cartaVisible.split("-")[0];
+    const valor = numero === "A" ? "1 u 11" :
+        ["J", "Q", "K"].includes(numero) ? 10 : Number(numero);
+
+    return `${valor}`;
+}
+
 function mostrarEstado(datos) {
     saldoDisponible = datos.saldo;
     pasoActual = datos.paso;
@@ -38,7 +50,9 @@ function mostrarEstado(datos) {
     mostrarCartas("dealer-cards", datos.cartasDealer);
     mostrarCartas("player-cards", datos.cartasJugador);
 
-    document.getElementById("dealer-sum").innerText = datos.puntosDealer ?? "";
+    document.getElementById("dealer-sum").innerText = datos.finalizada
+        ? datos.puntosDealer
+        : puntosCartaVisibleDealer(datos.cartasDealer);
     document.getElementById("player-sum").innerText = datos.puntosJugador;
 
     partidaEnCurso = !datos.finalizada;
@@ -114,16 +128,12 @@ async function cargarSaldo() {
     }
 }
 
-// Identificador compatible con conexiones HTTP
+// Genera el identificador de la partida incluso si el sitio se abre por HTTP.
 function generarIdBlackjack() {
     const bytes = crypto.getRandomValues(new Uint8Array(16));
     bytes[6] = (bytes[6] & 15) | 64;
     bytes[8] = (bytes[8] & 63) | 128;
-
-    const hex = Array.from(bytes, b =>
-        b.toString(16).padStart(2, "0")
-    ).join("");
-
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
     return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
@@ -265,10 +275,9 @@ window.onload = async function () {
     btnApostar.disabled = true;
     btnReintentar.style.display = "none";
 
-    // Mostrar cartas iniciales boca abajo
+    // Muestra las cartas de reverso antes de la primera apuesta.
     mostrarCartas("dealer-cards", ["BACK", "BACK"]);
     mostrarCartas("player-cards", ["BACK", "BACK"]);
-
     document.getElementById("dealer-sum").textContent = "—";
     document.getElementById("player-sum").textContent = "—";
 
@@ -279,7 +288,6 @@ window.onload = async function () {
     btnReintentar.onclick = async function () {
         mostrarCartas("dealer-cards", ["BACK", "BACK"]);
         mostrarCartas("player-cards", ["BACK", "BACK"]);
-
         document.getElementById("dealer-sum").innerText = "—";
         document.getElementById("player-sum").innerText = "—";
         document.getElementById("resultadoss").innerText = "";
