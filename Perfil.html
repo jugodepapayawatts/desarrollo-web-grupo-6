@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -11,7 +12,7 @@
 
     <h2>Perfil del jugador</h2>    
     <p>Usuario: <span id="nombre_usuario">Invitado</span></p>
-    <p>Saldo: <span id="saldo">0</span> CLP</p>
+    <p>Saldo: <span id="saldo">0</span> créditos virtuales</p>
 
     <h3>Actividad reciente</h3> 
     <p>Ultima actividad: <span id="ultima_actividad">Ninguna</span></p> 
@@ -28,35 +29,48 @@
 
   </div> 
 
-    <script src="Saldo.js"></script>
     <script>
-      //actualizar saldo
-      function actualizarSaldoPerfil() {
-        document.getElementById("saldo").textContent = obtenerSaldo();
+      async function cargarPerfil() {
+        const token = sessionStorage.getItem("casinoToken");
+
+        if (!token) {
+          window.location.href = "Inicio_sesion.html";
+          return;
+        }
+
+        try {
+          const respuesta = await fetch("/api/perfil", {
+            headers: {
+              "Authorization": "Bearer " + token
+            }
+          });
+
+          if (!respuesta.ok) {
+            sessionStorage.removeItem("casinoToken");
+            sessionStorage.removeItem("usuarioCasino");
+            window.location.href = "Inicio_sesion.html";
+            return;
+          }
+
+          const datos = await respuesta.json();
+          const usuario = datos.usuario;
+
+          document.getElementById("nombre_usuario").textContent = usuario.usuario;
+          document.getElementById("saldo").textContent = usuario.saldo;
+
+          // Las estadísticas se conectarán posteriormente
+          document.getElementById("ultima_actividad").textContent = "Ninguna";
+          document.getElementById("partidas_realizadas").textContent = "0";
+          document.getElementById("partidas_jugadas").textContent = "0";
+          document.getElementById("partidas_ganadas").textContent = "0";
+          document.getElementById("partidas_perdidas").textContent = "0";
+
+        } catch (error) {
+          console.error("Error al cargar perfil:", error);
+        }
       }
 
-      window.addEventListener("pageshow", actualizarSaldoPerfil);
-      window.addEventListener("storage", function(evento) {
-        if (evento.key === "casinoSaldo" || evento.key === null) {
-          actualizarSaldoPerfil();
-        }
-      });
-
-      actualizarSaldoPerfil();
-      //actualizar estadisticas
-      const estadisticas=obtenerEstadisticas();
-      document.getElementById("ultima_actividad").textContent=estadisticas.ultimaActividad;
-      document.getElementById("partidas_realizadas").textContent=estadisticas.partidasJugadas;
-      document.getElementById("partidas_jugadas").textContent=estadisticas.partidasJugadas;
-      document.getElementById("partidas_ganadas").textContent=estadisticas.partidasGanadas;
-      document.getElementById("partidas_perdidas").textContent=estadisticas.partidasPerdidas;
-
-      
-      const usuarioGuardado = sessionStorage.getItem("usuarioCasino");
-      if (usuarioGuardado !== null) {
-      document.getElementById("nombre_usuario").textContent = usuarioGuardado;
-    }
-
+      window.addEventListener("pageshow", cargarPerfil);
     </script>
     </body>
 </html>

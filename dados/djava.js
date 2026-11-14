@@ -11,7 +11,9 @@ const botonesApuesta = document.querySelectorAll(".boton-apuesta");
 const MULTIPLICADOR_DOBLES = 8;
 const MULTIPLICADOR_EXACTA = 4;
 const MULTIPLICADOR_PARIDAD = 2;
-let saldoDisponible = obtenerSaldo();
+
+let saldoDisponible = 0;
+let apuestaSeleccionada = null;
 
 const dado1 = {
   valor: Number(imagenDado1.dataset.valor),
@@ -23,13 +25,42 @@ const dado2 = {
   imagen: imagenDado2
 };
 
-let apuestaSeleccionada = null;
-
 function actualizarSaldo() {
   saldoElemento.textContent = saldoDisponible.toLocaleString("es-CL");
 }
 
-//  guarda la opcion elegida y la marca visualmente.
+// Obtener el saldo real desde MongoDB
+async function cargarSaldo() {
+  const token = sessionStorage.getItem("casinoToken");
+
+  if (!token) {
+    window.location.href = "../Inicio_sesion.html";
+    return;
+  }
+
+  try {
+    const respuesta = await fetch("/api/perfil", {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (!respuesta.ok) {
+      window.location.href = "../Inicio_sesion.html";
+      return;
+    }
+
+    const datos = await respuesta.json();
+    saldoDisponible = datos.usuario.saldo;
+    actualizarSaldo();
+
+  } catch (error) {
+    mensaje.textContent = "No se pudo consultar el saldo.";
+    console.error(error);
+  }
+}
+
+// Guarda la opcion elegida y la marca visualmente
 botonesApuesta.forEach(function(boton) {
   boton.setAttribute("aria-pressed", "false");
 
@@ -41,15 +72,17 @@ botonesApuesta.forEach(function(boton) {
 
     boton.classList.add("seleccionada");
     boton.setAttribute("aria-pressed", "true");
+
     apuestaSeleccionada = {
       tipo: boton.dataset.tipoApuesta,
       valor: boton.dataset.valor
     };
+
     mensaje.textContent = `Seleccionaste: ${boton.textContent.trim()}.`;
   });
 });
 
-//  valida que haya una opcion seleccionada y un monto positivo.
+// Valida que haya una opcion seleccionada y un monto positivo
 function validarApuesta() {
   const monto = Number(montoApuesta.value);
 
@@ -58,8 +91,13 @@ function validarApuesta() {
     return false;
   }
 
-  if (montoApuesta.value.trim() === "" || !Number.isInteger(monto) || monto <= 0) {
-    mensaje.textContent = "Ingresa un monto valido.";
+  if (
+    montoApuesta.value.trim() === "" ||
+    !Number.isSafeInteger(monto) ||
+    monto <= 0 ||
+    monto > 1000
+  ) {
+    mensaje.textContent = "Ingresa una apuesta entre 1 y 1000 créditos.";
     montoApuesta.focus();
     return false;
   }
@@ -73,92 +111,98 @@ function validarApuesta() {
   return true;
 }
 
-// genera un valor entre 1 y 6 para cada dado y cambia sus imagenes.
-function tirarDados() {
-  [dado1, dado2].forEach(function(dado) {
-    dado.valor = Math.floor(Math.random() * 6) + 1;
-    dado.imagen.dataset.valor = String(dado.valor);
-    dado.imagen.src = `caras/dado${dado.valor}.png`;
-    dado.imagen.alt = `Dado: ${dado.valor}`;
-  });
+// Actualizar imagenes con el resultado enviado por el servidor
+function mostrarDados(valor1, valor2) {
+  dado1.valor = valor1;
+  dado2.valor = valor2;
 
-  return dado1.valor + dado2.valor;
+  dado1.imagen.dataset.valor = String(valor1);
+  dado1.imagen.src = `caras/dado${valor1}.png`;
+  dado1.imagen.alt = `Dado: ${valor1}`;
+
+  dado2.imagen.dataset.valor = String(valor2);
+  dado2.imagen.src = `caras/dado${valor2}.png`;
+  dado2.imagen.alt = `Dado: ${valor2}`;
 }
 
-//  comprobaciones de dobles, suma exacta y paridad.
 function sonDobles() {
   return dado1.valor === dado2.valor;
-}
-
-function verificarApuestaDobles() {
-  return sonDobles() && dado1.valor === Number(apuestaSeleccionada.valor);
 }
 
 function obtenerSumaDados() {
   return dado1.valor + dado2.valor;
 }
 
-function verificarApuestaSuma() {
-  return obtenerSumaDados() === Number(apuestaSeleccionada.valor);
-}
-
 function obtenerParidad() {
   return obtenerSumaDados() % 2 === 0 ? "par" : "impar";
 }
 
-function verificarApuestaParidad() {
-  return obtenerParidad() === apuestaSeleccionada.valor;
-}
-
-function obtenerMultiplicador() {
-  if (apuestaSeleccionada.tipo === "dobles") {
-    return MULTIPLICADOR_DOBLES;
-  }
-
-  if (apuestaSeleccionada.tipo === "suma") {
-    return MULTIPLICADOR_EXACTA;
-  }
-
-  return MULTIPLICADOR_PARIDAD;
-}
-
-//  comprueba la apuesta, tira los dados y muestra el resultado.
-function realizarApuesta() {
+// Comprueba la apuesta y solicita el resultado al servidor
+async function realizarApuesta() {
   if (!validarApuesta()) {
     return;
   }
 
-  const suma = tirarDados();
-  const monto = Number(montoApuesta.value);
-  saldoDisponible -= monto;
-  let acerto = false;
+  const token = sessionStorage.getItem("casinoToken");
 
-  if (apuestaSeleccionada.tipo === "dobles") {
-    acerto = verificarApuestaDobles();
-  } else if (apuestaSeleccionada.tipo === "suma") {
-    acerto = verificarApuestaSuma();
-  } else if (apuestaSeleccionada.tipo === "paridad") {
-    acerto = verificarApuestaParidad();
+  if (!token) {
+    window.location.href = "../Inicio_sesion.html";
+    return;
   }
 
-  resultadoDados.textContent =
-    `Salio ${dado1.valor} + ${dado2.valor} = ${suma} (${obtenerParidad()}).`;
+  botonLanzar.disabled = true;
+  mensaje.textContent = "Lanzando dados...";
 
-  if (acerto) {
-    const multiplicador = obtenerMultiplicador();
-    const premio = monto * multiplicador;
-    saldoDisponible += premio;
-    mensaje.textContent =
-      `¡Acertaste! Ganaste: $${premio.toLocaleString("es-CL")} (${monto.toLocaleString("es-CL")} × ${multiplicador}).`;
-  } else {
-    mensaje.textContent = "Esta vez no acertaste.";
+  try {
+    const respuesta = await fetch("/api/dados/jugar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        tipo: apuestaSeleccionada.tipo,
+        valor: apuestaSeleccionada.valor,
+        monto: Number(montoApuesta.value),
+        solicitudId: crypto.randomUUID()
+      })
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      mensaje.textContent = datos.error || "Error al realizar la apuesta.";
+      await cargarSaldo();
+      return;
+    }
+
+    mostrarDados(datos.dado1, datos.dado2);
+
+    resultadoDados.textContent =
+      `Salio ${dado1.valor} + ${dado2.valor} = ${obtenerSumaDados()} (${obtenerParidad()}).`;
+
+    saldoDisponible = datos.saldo;
+    actualizarSaldo();
+
+    if (datos.acerto) {
+      mensaje.textContent =
+        `¡Acertaste! Ganaste ${datos.premio.toLocaleString("es-CL")} créditos (${Number(montoApuesta.value).toLocaleString("es-CL")} × ${datos.multiplicador}).`;
+    } else {
+      mensaje.textContent = "Esta vez no acertaste.";
+    }
+
+  } catch (error) {
+    mensaje.textContent = "No se pudo conectar con el servidor.";
+    console.error(error);
+    await cargarSaldo();
+
+  } finally {
+    botonLanzar.disabled = false;
   }
-
-  guardarSaldo(saldoDisponible);
-  actualizarSaldo();
-  registrarPartida("Dados", acerto ? "ganada" : "perdida");
 }
 
 actualizarSaldo();
+
+window.addEventListener("pageshow", cargarSaldo);
 
 botonLanzar.addEventListener("click", realizarApuesta);
