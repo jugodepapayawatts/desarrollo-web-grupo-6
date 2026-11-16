@@ -14,6 +14,9 @@ function guardarSaldo(saldo) {
   sessionStorage.setItem(CLAVE_SALDO, String(saldo));
 }
 
+function esModoInvitado() {
+  return !sessionStorage.getItem("casinoToken");
+}
 
 //Esto es para las estadisticas
 const CLAVE_ESTADISTICAS = "casinoEstadisticas";

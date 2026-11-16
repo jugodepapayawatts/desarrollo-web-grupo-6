@@ -52,8 +52,9 @@ async function cargarSaldo() {
   const token = sessionStorage.getItem("casinoToken");
 
   if (!token) {
-    window.location.href = "../Inicio_sesion.html";
-    return false;
+    saldo = Number(sessionStorage.getItem("casinoSaldo")) || 10000;
+    actualizarSaldo();
+    return true;
   }
 
   try {
@@ -74,6 +75,7 @@ async function cargarSaldo() {
 
     const datos = await respuesta.json();
     saldo = datos.usuario.saldo;
+    sessionStorage.setItem("casinoSaldo", String(saldo));
     actualizarSaldo();
     return true;
 
@@ -124,9 +126,14 @@ async function realizarApuesta() {
 
   if (montoInput.value.trim() === "" ||
       !Number.isSafeInteger(monto) ||
-      monto <= 0 || monto > 1000) {
-    mensaje.textContent = "Ingresa una apuesta entre 1 y 1000 créditos.";
+      monto <= 0 ) {
+    mensaje.textContent = "Ingresa una apuesta valida.";
     montoInput.focus();
+    return;
+  }
+
+  if (monto > saldo) {
+    mensaje.textContent = "No tienes saldo suficiente para esa apuesta.";
     return;
   }
 
@@ -137,7 +144,31 @@ async function realizarApuesta() {
     const token = sessionStorage.getItem("casinoToken");
 
     if (!token) {
-      window.location.href = "../Inicio_sesion.html";
+      const numero = Math.floor(Math.random() * 37);
+      const color = obtenerColor(numero);
+      const gano = ganoApuesta(numero, apuesta);
+
+      saldo = gano ? saldo + monto : saldo - monto;
+      sessionStorage.setItem("casinoSaldo", String(Math.max(0, saldo)));
+
+      if (gano) {
+        detalleResultado.textContent = `¡Ganaste! Recibes ${formatoDinero(monto)}.`;
+      } else {
+        detalleResultado.textContent = `Perdiste ${formatoDinero(monto)}.`;
+      }
+
+      numeroGanador.textContent = `Número ${numero} - ${color}`;
+      mensaje.textContent = gano ? "Apuesta ganadora." : "Apuesta perdida.";
+
+      rondas.unshift({
+        numero: numero,
+        color: color,
+        resultado: gano ? "Ganada" : "Perdida"
+      });
+
+      actualizarSaldo();
+      mostrarHistorial();
+      montoInput.value = "";
       return;
     }
 

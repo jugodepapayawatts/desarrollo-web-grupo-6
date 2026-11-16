@@ -33,7 +33,9 @@ async function cargarSaldo() {
   const token = sessionStorage.getItem("casinoToken");
 
   if (!token) {
-    window.location.href = "../Inicio_sesion.html";
+    saldoDisponible = Number(sessionStorage.getItem("casinoSaldo")) || 10000;
+    sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
+    actualizarSaldo();
     return;
   }
 
@@ -51,6 +53,7 @@ async function cargarSaldo() {
 
     const datos = await respuesta.json();
     saldoDisponible = datos.usuario.saldo;
+    sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
     actualizarSaldo();
 
   } catch (error) {
@@ -91,10 +94,10 @@ function validarApuesta() {
   if (
     montoApuesta.value.trim() === "" ||
     !Number.isSafeInteger(monto) ||
-    monto <= 0 ||
-    monto > 1000
-  ) {
-    mensaje.textContent = "Ingresa una apuesta entre 1 y 1000 créditos.";
+    monto <= 0 
+  ) 
+  {
+    mensaje.textContent = "Ingresa una apuesta valida.";
     montoApuesta.focus();
     return false;
   }
@@ -159,7 +162,43 @@ async function realizarApuesta() {
   const token = sessionStorage.getItem("casinoToken");
 
   if (!token) {
-    window.location.href = "../Inicio_sesion.html";
+    const monto = Number(montoApuesta.value);
+    const dado1Valor = Math.floor(Math.random() * 6) + 1;
+    const dado2Valor = Math.floor(Math.random() * 6) + 1;
+    const tipo = apuestaSeleccionada.tipo;
+    const valor = apuestaSeleccionada.valor;
+    let acerto = false;
+    let multiplicador = 1;
+
+    if (tipo === "dobles") {
+      acerto = dado1Valor === valor && dado2Valor === valor;
+      multiplicador = 8;
+    } else if (tipo === "suma") {
+      acerto = dado1Valor + dado2Valor === Number(valor);
+      multiplicador = 6;
+    } else if (tipo === "paridad") {
+      const par = (dado1Valor + dado2Valor) % 2 === 0;
+      acerto = (valor === "par" && par) || (valor === "impar" && !par);
+      multiplicador = 2;
+    }
+
+    mostrarDados(dado1Valor, dado2Valor);
+    resultadoDados.textContent =
+      `Salio ${dado1Valor} + ${dado2Valor} = ${dado1Valor + dado2Valor} (${obtenerParidad()}).`;
+
+    if (acerto) {
+      const premio = monto * multiplicador;
+      saldoDisponible += premio;
+      mensaje.textContent = `¡Acertaste! Ganaste ${premio.toLocaleString("es-CL")} créditos (${monto.toLocaleString("es-CL")} × ${multiplicador}).`;
+    } else {
+      saldoDisponible -= monto;
+      mensaje.textContent = "Esta vez no acertaste.";
+    }
+
+    saldoDisponible = Math.max(0, saldoDisponible);
+    sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
+    actualizarSaldo();
+    montoApuesta.value = "";
     return;
   }
 

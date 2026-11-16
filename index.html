@@ -9,8 +9,9 @@
 
   <body>
     <div class="barra_superior">
-      <a href="Crea_cuenta.html" class="boton_inicio">Crear cuenta</a>
-      <a href="Inicio_sesion.html" class="boton_inicio">Iniciar sesión</a>
+      <a id="btn-crear-cuenta" href="Crea_cuenta.html" class="boton_inicio">Crear cuenta</a>
+      <a id="btn-iniciar-sesion" href="Inicio_sesion.html" class="boton_inicio">Iniciar sesión</a>
+      <button id="btn-cerrar-sesion" class="boton_inicio" style="display: none;">Cerrar sesión</button>
     </div>
 
     <div class="moverse">
@@ -48,5 +49,30 @@
         <p>BlackJack</p>
       </button>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const token = sessionStorage.getItem("casinoToken");
+        const crearCuentaBtn = document.getElementById("btn-crear-cuenta");
+        const iniciarSesionBtn = document.getElementById("btn-iniciar-sesion");
+        const cerrarSesionBtn = document.getElementById("btn-cerrar-sesion");
+
+        if (token) {
+          crearCuentaBtn.style.display = "none";
+          iniciarSesionBtn.style.display = "none";
+          cerrarSesionBtn.style.display = "inline-block";
+        } else {
+          crearCuentaBtn.style.display = "inline-block";
+          iniciarSesionBtn.style.display = "inline-block";
+          cerrarSesionBtn.style.display = "none";
+        }
+      });
+
+      document.getElementById("btn-cerrar-sesion")?.addEventListener("click", function () {
+        sessionStorage.removeItem("casinoToken");
+        sessionStorage.removeItem("usuarioCasino");
+        window.location.href = "index.html";
+      });
+    </script>
   </body>
 </html>

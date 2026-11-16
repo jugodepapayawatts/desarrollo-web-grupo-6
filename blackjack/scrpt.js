@@ -84,12 +84,62 @@ function mostrarEstado(datos) {
     }
 }
 
+function cartaAleatoria() {
+    const numeros = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    const palos = ["C", "D", "H", "S"];
+    return `${numeros[Math.floor(Math.random() * numeros.length)]}-${palos[Math.floor(Math.random() * palos.length)]}`;
+}
+
+function valorCarta(carta) {
+    const numero = carta.split("-")[0];
+    if (numero === "A") return 11;
+    if (["J", "Q", "K"].includes(numero)) return 10;
+    return Number(numero);
+}
+
+function puntajeMano(cartas) {
+    let total = cartas.reduce((suma, carta) => suma + valorCarta(carta), 0);
+    let ases = cartas.filter(carta => carta.split("-")[0] === "A").length;
+
+    while (total > 21 && ases > 0) {
+        total -= 10;
+        ases--;
+    }
+
+    return total;
+}
+
+function iniciarPartidaLocal() {
+    const cartasDealer = [cartaAleatoria(), "BACK"];
+    const cartasJugador = [cartaAleatoria(), cartaAleatoria()];
+    const puntosJugador = puntajeMano(cartasJugador);
+    const puntosDealer = puntajeMano(cartasDealer.filter(carta => carta !== "BACK"));
+
+    return {
+        saldo: saldoDisponible,
+        paso: 0,
+        cartasDealer: cartasDealer,
+        cartasJugador: cartasJugador,
+        finalizada: false,
+        puntosDealer: puntosDealer,
+        puntosJugador: puntosJugador,
+        resultado: null
+    };
+}
+
 async function cargarSaldo() {
     const token = sessionStorage.getItem("casinoToken");
 
     if (!token) {
-        window.location.href = "../Inicio_sesion.html";
-        return false;
+        saldoDisponible = Number(sessionStorage.getItem("casinoSaldo")) || 10000;
+        cargado = true;
+        actualizarSaldo();
+
+        if (!partidaEnCurso && !solicitudId) {
+            btnApostar.disabled = false;
+        }
+
+        return true;
     }
 
     try {
@@ -111,6 +161,7 @@ async function cargarSaldo() {
         const datos = await respuesta.json();
 
         saldoDisponible = datos.usuario.saldo;
+        sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
         cargado = true;
 
         actualizarSaldo();
@@ -147,8 +198,6 @@ async function jugar(accion) {
 
         if (montoInput.value.trim() === "" ||
             !Number.isSafeInteger(monto) ||
-            monto < 1 ||
-            monto > 1000 ||
             monto > saldoDisponible) {
 
             mensaje.textContent = "Ingresa una apuesta de 1 a 1000 que no supere el saldo.";
@@ -168,16 +217,100 @@ async function jugar(accion) {
     btnStay.disabled = true;
     btnApostar.disabled = true;
 
-    mensaje.textContent = "Procesando partida...";
+    const token = sessionStorage.getItem("casinoToken");
 
-    try {
-        const token = sessionStorage.getItem("casinoToken");
-
-        if (!token) {
-            window.location.href = "../Inicio_sesion.html";
+    if (!token) {
+        if (accion === "iniciar") {
+            const datos = iniciarPartidaLocal();
+            datos.saldo = saldoDisponible - monto;
+            saldoDisponible = datos.saldo;
+            sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
+            mostrarEstado(datos);
+            mensaje.textContent = "Apuesta aceptada. ¡Que comience el juego!";
+            procesando = false;
+            btnHit.disabled = false;
+            btnStay.disabled = false;
             return;
         }
 
+        if (accion === "pedir") {
+            const cartasJugador = document.getElementById("player-cards").children;
+            const cartas = Array.from(cartasJugador).map(carta => carta.alt || carta.textContent || "A-P");
+            const cartaNueva = cartaAleatoria();
+            const nuevasCartas = [...cartas.filter(carta => carta !== "BACK"), cartaNueva];
+            const puntos = puntajeMano(nuevasCartas);
+
+            if (puntos > 21) {
+                saldoDisponible = Math.max(0, saldoDisponible - apuestaActual);
+                sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
+                mostrarCartas("player-cards", nuevasCartas);
+                document.getElementById("player-sum").innerText = String(puntos);
+                mostrarCartas("dealer-cards", ["BACK", "BACK"]);
+                document.getElementById("dealer-sum").innerText = "—";
+                document.getElementById("resultadoss").innerText = "¡Perdiste!";
+                mensaje.textContent = `Resultado: ¡Perdiste! Saldo disponible: ${saldoDisponible}.`;
+                btnHit.disabled = true;
+                btnStay.disabled = true;
+                solicitudId = null;
+                sessionStorage.removeItem("blackjackPartidaId");
+                partidaEnCurso = false;
+                procesando = false;
+                actualizarSaldo();
+                return;
+            }
+
+            mostrarCartas("player-cards", nuevasCartas);
+            document.getElementById("player-sum").innerText = String(puntos);
+            mensaje.textContent = "Carta pedida.";
+            procesando = false;
+            btnHit.disabled = false;
+            btnStay.disabled = false;
+            return;
+        }
+
+        if (accion === "plantarse") {
+            let cartasDealer = Array.from(document.getElementById("dealer-cards").children).map(carta => carta.alt || carta.textContent || "A-P");
+            const cartasJugador = Array.from(document.getElementById("player-cards").children).map(carta => carta.alt || carta.textContent || "A-P");
+            let puntosDealer = puntajeMano(cartasDealer.filter(carta => carta !== "BACK"));
+            let puntosJugador = puntajeMano(cartasJugador);
+
+            while (puntosDealer < 17) {
+                const carta = cartaAleatoria();
+                cartasDealer.push(carta);
+                puntosDealer = puntajeMano(cartasDealer.filter(carta => carta !== "BACK"));
+            }
+
+            mostrarCartas("dealer-cards", cartasDealer);
+            document.getElementById("dealer-sum").innerText = String(puntosDealer);
+
+            if (puntosDealer > 21 || puntosJugador > puntosDealer) {
+                saldoDisponible += apuestaActual;
+                document.getElementById("resultadoss").innerText = "¡Ganaste!";
+                mensaje.textContent = `Resultado: ¡Ganaste! Saldo disponible: ${saldoDisponible}.`;
+            } else if (puntosJugador === puntosDealer) {
+                document.getElementById("resultadoss").innerText = "¡Empate!";
+                mensaje.textContent = `Resultado: ¡Empate! Saldo disponible: ${saldoDisponible}.`;
+            } else {
+                saldoDisponible = Math.max(0, saldoDisponible - apuestaActual);
+                document.getElementById("resultadoss").innerText = "¡Perdiste!";
+                mensaje.textContent = `Resultado: ¡Perdiste! Saldo disponible: ${saldoDisponible}.`;
+            }
+
+            sessionStorage.setItem("casinoSaldo", String(saldoDisponible));
+            actualizarSaldo();
+            solicitudId = null;
+            sessionStorage.removeItem("blackjackPartidaId");
+            partidaEnCurso = false;
+            btnHit.disabled = true;
+            btnStay.disabled = true;
+            procesando = false;
+            return;
+        }
+    }
+
+    mensaje.textContent = "Procesando partida...";
+
+    try {
         const respuesta = await fetch("/api/blackjack/jugar", {
             method: "POST",
             headers: {

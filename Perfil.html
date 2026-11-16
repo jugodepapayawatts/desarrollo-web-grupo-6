@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <title> Juegos -Casino Nova </title>
        <link rel="stylesheet" href="styles.css" />
+       <script src="Saldo.js" defer></script>
 
     </head>
     <body>
@@ -33,7 +35,13 @@
         const token = sessionStorage.getItem("casinoToken");
 
         if (!token) {
-          window.location.href = "Inicio_sesion.html";
+          document.getElementById("nombre_usuario").textContent = "Invitado";
+          document.getElementById("saldo").textContent = obtenerSaldo();
+          document.getElementById("ultima_actividad").textContent = "Sin sesión activa";
+          document.getElementById("partidas_realizadas").textContent = "0";
+          document.getElementById("partidas_jugadas").textContent = "0";
+          document.getElementById("partidas_ganadas").textContent = "0";
+          document.getElementById("partidas_perdidas").textContent = "0";
           return;
         }
 
@@ -47,7 +55,13 @@
           if (!respuesta.ok) {
             sessionStorage.removeItem("casinoToken");
             sessionStorage.removeItem("usuarioCasino");
-            window.location.href = "Inicio_sesion.html";
+            document.getElementById("nombre_usuario").textContent = "Invitado";
+            document.getElementById("saldo").textContent = obtenerSaldo();
+            document.getElementById("ultima_actividad").textContent = "Sin sesión activa";
+            document.getElementById("partidas_realizadas").textContent = "0";
+            document.getElementById("partidas_jugadas").textContent = "0";
+            document.getElementById("partidas_ganadas").textContent = "0";
+            document.getElementById("partidas_perdidas").textContent = "0";
             return;
           }
 

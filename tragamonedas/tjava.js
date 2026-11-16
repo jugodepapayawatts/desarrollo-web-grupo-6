@@ -4,7 +4,7 @@
     { valor: "🍒", nombre: "Cherry", multiplicador: 2, multiplicadorPar: 0.5 },
     { valor: "BAR", nombre: "BAR", multiplicador: 4, multiplicadorPar: 1.5 },
     { valor: "7", nombre: "Lucky 7", multiplicador: 8, multiplicadorPar: 2},
-    { valor: "💎", nombre: "Diamante", multiplicador: 0, multiplicadorPar: 0 }
+    { valor: "💎", nombre: "Diamante" }
   ];
   const jackpotBase = 2500;
   const apuestaInicial = 10;
@@ -43,7 +43,7 @@
   function formatoDinero(cantidad) {
     return `${new Intl.NumberFormat("es-CL", {
       maximumFractionDigits: 0
-    }).format(cantidad)} CLP`;
+    }).format(cantidad)} créditos`;
   }
 
   function actualizarInterfaz() {
@@ -91,7 +91,11 @@ function generarSolicitudId() {
     const token = sessionStorage.getItem("casinoToken");
 
     if (!token) {
-      window.location.href = "../Inicio_sesion.html";
+      saldo = Number(sessionStorage.getItem("casinoSaldo")) || 10000;
+      jackpot = 2500;
+      saldoCargado = true;
+      sessionStorage.setItem("casinoSaldo", String(saldo));
+      actualizarInterfaz();
       return;
     }
 
@@ -112,6 +116,7 @@ function generarSolicitudId() {
       const datos = await respuesta.json();
       saldo = datos.saldo;
       jackpot = datos.jackpot;
+      sessionStorage.setItem("casinoSaldo", String(saldo));
       saldoCargado = true;
       actualizarInterfaz();
 
@@ -145,8 +150,54 @@ function generarSolicitudId() {
 
       try {
         const token = sessionStorage.getItem("casinoToken");
+
         if (!token) {
-          window.location.href = "../Inicio_sesion.html";
+          const resultado = [
+            simboloAleatorio(),
+            simboloAleatorio(),
+            simboloAleatorio()
+          ];
+
+          resultado.forEach(function (simbolo, indice) {
+            carretes[indice].textContent = simbolo.valor;
+          });
+
+          const iguales = resultado.every(function (simbolo) {
+            return simbolo.nombre === resultado[0].nombre;
+          });
+
+          const simboloPar = resultado.find(function (simbolo, indice) {
+            return resultado.some(function (otro, otroIndice) {
+              return otroIndice !== indice && otro.nombre === simbolo.nombre;
+            });
+          });
+
+          const parGanador = !iguales && !!simboloPar && simboloPar.multiplicadorPar > 0;
+          const ganado = iguales || parGanador;
+          let premio = 0;
+
+          if (iguales && resultado[0].nombre === "Diamante") {
+            premio = jackpot;
+            jackpot = jackpotBase;
+            saldo += premio;
+            mensaje.textContent = `¡Jackpot! Ganaste ${formatoDinero(premio)} con tres diamantes.`;
+          } else if (iguales) {
+            premio = apuestaSeleccionada * resultado[0].multiplicador;
+            saldo += premio;
+            mensaje.textContent = `¡Ganaste ${formatoDinero(premio)}! Tres ${resultado[0].nombre} iguales.`;
+          } else if (parGanador) {
+            premio = apuestaSeleccionada * simboloPar.multiplicadorPar;
+            saldo += premio;
+            mensaje.textContent = `¡Ganaste ${formatoDinero(premio)} con dos ${simboloPar.nombre} iguales!`;
+          } else {
+            saldo -= apuestaSeleccionada;
+            jackpot += apuestaSeleccionada;
+            mensaje.textContent = `No tuviste una línea ganadora. Perdiste ${formatoDinero(apuestaSeleccionada)}.`;
+          }
+
+          saldo = Math.max(0, saldo);
+          sessionStorage.setItem("casinoSaldo", String(saldo));
+          actualizarInterfaz();
           return;
         }
 

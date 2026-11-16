@@ -43,9 +43,8 @@
       name="contrasena" minlength="8" required>
       <br><br>
 
-      <label for="fecha">Fecha de nacimiento:</label>
-      <input type="date" id="fecha"
-      name="fecha" required>
+      <label for="edad">Edad:</label>
+      <input type="number" id="edad" name="edad" >
       <br><br>
 
       <label for="genero">Género</label>
@@ -81,12 +80,28 @@
         const aviso = document.getElementById("aviso_cuenta");
         aviso.textContent = "Creando cuenta...";
 
+        const edad = Number(document.getElementById("edad").value);
+
+        if (!edad || edad < 18) {
+            aviso.textContent = "Debes tener al menos 18 años para crear la cuenta.";
+            return;
+        }
+        if(edad>70 && edad<100) {
+            aviso.textContent = "bienvenido abuelito, disfruta del casino, pero recuerda jugar con responsabilidad.";
+
+        }
+        if (edad > 100) {
+            aviso.textContent = "Dudo que tengas más de 100 años, pero si es así, ¡felicidades! Aun así, no puedes crear una cuenta.";
+            return;
+        }
+
         const datos = {
             nombre: document.getElementById("nombre").value.trim(),
             apellido: document.getElementById("apellido").value.trim(),
             correo: document.getElementById("correo").value.trim(),
             usuario: document.getElementById("usuario").value.trim(),
-            contrasena: document.getElementById("contrasena").value
+            contrasena: document.getElementById("contrasena").value,
+            edad: edad
         };
 
         try {
