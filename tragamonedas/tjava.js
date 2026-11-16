@@ -1,5 +1,5 @@
 
-( function () {
+(function () {
   const simbolos = [
     { valor: "🍒", nombre: "Cherry", multiplicador: 2, multiplicadorPar: 0.5 },
     { valor: "BAR", nombre: "BAR", multiplicador: 4, multiplicadorPar: 1.5 },
@@ -65,7 +65,14 @@
     return simbolos[Math.floor(Math.random() * simbolos.length)];
   }
 
-  // Obtener el saldo y el jackpot desde MongoDB
+  function generarSolicitudId() {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+
+    return "tragamonedas-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+  }
+
   async function cargarSaldo() {
     const token = sessionStorage.getItem("casinoToken");
 
@@ -137,7 +144,7 @@
           },
           body: JSON.stringify({
             monto: apuestaSeleccionada,
-            solicitudId: crypto.randomUUID()
+            solicitudId: generarSolicitudId()
           })
         });
 

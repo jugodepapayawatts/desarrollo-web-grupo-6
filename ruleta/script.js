@@ -1,4 +1,3 @@
-
 const saldoElemento = document.getElementById("saldo");
 const juego = document.getElementById("juego");
 const tipoApuesta = document.getElementById("tipo-apuesta");
@@ -101,6 +100,15 @@ function mostrarHistorial() {
   });
 }
 
+// Generar identificador compatible con HTTP y HTTPS
+function generarSolicitudId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return "ruleta-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+}
+
 // Realizar apuesta mediante el servidor
 async function realizarApuesta() {
   const monto = Number(montoInput.value);
@@ -134,7 +142,7 @@ async function realizarApuesta() {
       body: JSON.stringify({
         apuesta: apuesta,
         monto: monto,
-        solicitudId: crypto.randomUUID()
+        solicitudId: generarSolicitudId()
       })
     });
 

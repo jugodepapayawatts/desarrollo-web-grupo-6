@@ -29,7 +29,6 @@ function actualizarSaldo() {
   saldoElemento.textContent = saldoDisponible.toLocaleString("es-CL");
 }
 
-// Obtener el saldo real desde MongoDB
 async function cargarSaldo() {
   const token = sessionStorage.getItem("casinoToken");
 
@@ -60,7 +59,6 @@ async function cargarSaldo() {
   }
 }
 
-// Guarda la opcion elegida y la marca visualmente
 botonesApuesta.forEach(function(boton) {
   boton.setAttribute("aria-pressed", "false");
 
@@ -82,7 +80,6 @@ botonesApuesta.forEach(function(boton) {
   });
 });
 
-// Valida que haya una opcion seleccionada y un monto positivo
 function validarApuesta() {
   const monto = Number(montoApuesta.value);
 
@@ -111,7 +108,6 @@ function validarApuesta() {
   return true;
 }
 
-// Actualizar imagenes con el resultado enviado por el servidor
 function mostrarDados(valor1, valor2) {
   dado1.valor = valor1;
   dado2.valor = valor2;
@@ -137,7 +133,14 @@ function obtenerParidad() {
   return obtenerSumaDados() % 2 === 0 ? "par" : "impar";
 }
 
-// Comprueba la apuesta y solicita el resultado al servidor
+function generarSolicitudId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return "dados-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+}
+
 async function realizarApuesta() {
   if (!validarApuesta()) {
     return;
@@ -164,7 +167,7 @@ async function realizarApuesta() {
         tipo: apuestaSeleccionada.tipo,
         valor: apuestaSeleccionada.valor,
         monto: Number(montoApuesta.value),
-        solicitudId: crypto.randomUUID()
+        solicitudId: generarSolicitudId()
       })
     });
 
