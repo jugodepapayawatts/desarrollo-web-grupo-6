@@ -1,3 +1,4 @@
+
 const saldoElemento = document.getElementById("saldo");
 const juego = document.getElementById("juego");
 const tipoApuesta = document.getElementById("tipo-apuesta");
@@ -47,7 +48,6 @@ function actualizarSaldo() {
   saldoElemento.textContent = formatoDinero(saldo);
 }
 
-// Obtener saldo desde MongoDB
 async function cargarSaldo() {
   const token = sessionStorage.getItem("casinoToken");
 
@@ -100,7 +100,6 @@ function mostrarHistorial() {
   });
 }
 
-
 function generarSolicitudId() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
     return crypto.randomUUID();
@@ -119,9 +118,6 @@ function generarSolicitudId() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
-
-
-// Realizar apuesta mediante el servidor
 async function realizarApuesta() {
   const monto = Number(montoInput.value);
   const apuesta = tipoApuesta.value;
